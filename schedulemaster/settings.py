@@ -16,7 +16,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+print(BASE_DIR)
 secret_file = os.path.join(BASE_DIR, 'secret.json')
 
 with open(secret_file, 'r') as f:
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apiapp',
+    'frontapp',
 ]
 
 MIDDLEWARE = [
@@ -66,10 +67,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'schedulemaster.urls'
 
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
