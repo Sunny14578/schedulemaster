@@ -1,0 +1,30 @@
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login page </title>
+    <link rel="stylesheet" type = "text/css" href="{% static 'css/login.css' %}">
+    <script src="{% static 'js/login.js' %}"></script>
+</head>
+
+<div class="body">
+    <section class="login_form">
+      <button class="back" onclick="goBack">←</button>
+      <h1><a href="/">Title</a></h1>
+      <div class="int_area">
+        <input type="text" name="id" id="id" autocomplete="off" required></input>
+        <label for="id" class="{showWarning ? 'warning' : ''}">USER NAME</label>
+      </div>
+      <div class="int_area">
+        <input type="password" name="pw" id="pw" autocomplete="off" required></input>
+        <label for="pw" class="{showWarning ? 'warning' : ''}">PASSWORD</label>
+      </div>
+      <div class="btn_area">
+        <button type="submit" onclick="onDataPost()">로그인</button>
+      </div>
+      <div class="caption">
+        <a href="/join">SING UP?</a>
+      </div>
+    </section>
+</div>
+
