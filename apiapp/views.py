@@ -110,7 +110,7 @@ class AuthAPIView(APIView):
             res = Response(
                 {
                     "user": serializer.data,
-                    "message": "login success",
+                    "message": 1,
                     "token": {
                         "access": access_token,
                         "refresh": refresh_token,
@@ -123,7 +123,9 @@ class AuthAPIView(APIView):
             res.set_cookie("refresh", refresh_token, httponly=True)
             return res
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                "message" : 0
+            })
 
     # 로그아웃
     def delete(self, request):

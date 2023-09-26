@@ -1,4 +1,77 @@
-/* hi */
-/* hihihi */
-/* hihihihihi */
-/* dfdfdf */
+/* @font-face{
+    font-family: a;
+    src : url(../fonts/abster-webfont.woff);
+} */
+
+* {
+    margin : 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+header{
+    width: 90%;
+    height: 100px;
+    margin:0 auto;
+    display: flex;
+    
+    align-items: center;
+    z-index:100;
+    position : sticky;
+    background-color : white;
+    top : 0px;
+    /* align-item 영역의 수직방향 중앙에 위치시킨다. */
+}
+
+header > h1 > a{
+    font-family: a;
+    color : black;
+    text-decoration: none;
+    margin-left : 250px;
+}
+
+nav{
+   margin-left: 10vw;
+}
+
+
+nav > ul:nth-child(2){
+    margin-left: 10vw;
+}
+
+
+nav > ul{
+    display: inline-block;
+}
+
+nav > ul > li{
+    display: inline-block;
+    margin:0 10px;
+}
+
+nav > ul > li > a{
+    color : black;
+    text-decoration: none;
+}
+
+nav > ul > li > a:hover{
+    color : wheat;
+}
+
+#user-a:hover {
+    color : black
+}
+
+footer{
+    width: 70%;
+    height: 100px;
+    margin:0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-color: #dee2e6;
+    border-top-style: solid;
+    border-block-width: 1px;
+    /* align-item 영역의 수직방향 중앙에 위치시킨다. */
+}
