@@ -1,0 +1,84 @@
+{% load static %}
+<head>
+    <link rel="stylesheet" type = "text/css" href="{% static 'css/schedule.css' %}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <nav class="sidebar close">
+        <header>
+            <div class="image-text">
+                <span class="image">
+                    <img src="{% static 'imges/logo.png' %}" alt="logo">
+                </span>
+
+                <div class="text header-text">
+                    <span class="name">일정 관리</span>
+                    <span class="profession">Scheduling</span>
+                </div>
+            </div>
+
+            <i class='bx bx-chevron-right toggle'></i>
+        </header>
+
+        <div class="menu-bar">
+            <div class="menu">
+                <!-- <li class="search-box">
+                    <i class='bx bx-search icon'></i>
+                    <input type="search" placeholder="Search...">
+                </li> -->
+                <ul class="menu-links">
+                    <li class="nav_link teacher">
+                        <a class="nav a close">
+                            <i class='bx bx-pencil icon teacher'></i>
+                            <span class="text nav-text teacher">강사</span>
+                        </a>
+                    </li>
+                    <li class="nav_link room">
+                        <a class="nav a close room">
+                            <i class='bx bx-building-house icon room'></i>
+                            <span class="text nav-text room">강의장</span>
+                        </a>
+                    </li>
+    
+                </ul>
+            </div>
+
+            <div class="bottom-content">
+                <li class="">
+                    <a href="#">
+                        <i class='bx bx-log-out icon' ></i>
+                        <span class="text nav-text">로그아웃</span>
+                    </a>
+                </li>
+            </div>
+
+        </div>
+    </nav>
+
+    <nav class="sidebar2 close close2" id ="teacher">
+        <header>
+            <div class="image-text">
+                <div class="text header-text">
+                    <span class="name">강사 현황</span> 
+                    <span class="profession">Instructor Status</span>
+                </div>
+            </div>
+
+            <i class='bx bx-user-plus toggle'></i>
+        </header>
+        <ul class="menu-links">
+            <li class="nav_link teacher">
+                <a class="nav a close">
+                    <span class='text nav-text name'></span>
+                    <span class="text nav-text color"></span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <section class="home">
+        <div class="text">Dash</div>
+    </section>
+
+    <script src="{% static 'js/schedule.js' %}"></script>
+</body>

@@ -5,3 +5,6 @@ def home(request):
 
 def login(request):
     return render(request, 'frontapp/login.html')
+
+def schedule(request):
+    return render(request, 'frontapp/schedule.html')

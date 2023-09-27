@@ -1,5 +1,3 @@
-console.log(1);
-
 document.addEventListener('DOMContentLoaded', function () {
     // 토큰 정보 가져오기
     const token = localStorage.getItem('authToken');
