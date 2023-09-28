@@ -120,6 +120,12 @@ body{
 }
 .sidebar li .icon,
 .sidebar li .text{
+    color: var(--sidebar-color);
+    transition: var(--tran-02);
+}
+
+.sidebar li .icon.close,
+.sidebar li .text.close{
     color: var(--text-color);
     transition: var(--tran-02);
 }
@@ -242,8 +248,8 @@ header .image-text .header-text{
     background-color: var(--primary-color) !important; 
 }
 
-.sidebar li a:hover .icon,
-.sidebar li a:hover .text{
+.sidebar div li a:hover .icon,
+.sidebar div li a:hover .text{
     color: var(--sidebar-color);
 }
 
@@ -276,4 +282,168 @@ header .image-text .header-text{
 .sidebar.close ~ .home{
     left: 88px;
     width: calc(100% - 88px);
+}
+
+/* modal */
+div.modal{
+    width: 400px;
+    height: 400px;
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #FFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+div.modal.hidden{
+    display: none;
+}
+
+.modal{
+    display:flex;
+    justify-content:center;
+    align-items: center;
+    width:400px;
+    height:100%;
+    background-size: cover;
+    overflow:overlay;
+    font-family: 'SUITE-Regular', sans-serif;
+    border-radius: 20px;
+}
+
+.modal::before{
+    content: "";
+    position:absolute; z-index:1;
+    top:0; right:0; bottom:0; left:0;
+}
+
+.login_form{
+    position:relative; 
+    z-index:2;
+}
+.login_form h1{
+    font-size: 32px; color: black;
+    text-align: center;
+}
+.int_area{
+    width:300px;
+    position: relative;
+    margin-top: 10px;
+}
+.int_area:first-child{
+    margin-top:0;
+}
+.int_area input{
+    font-weight: bold;
+    width:100%;
+    padding:20px 10px 5px;
+    background-color:transparent;
+    border:none;
+    border-bottom:1px solid #999;
+    font-size:14px; 
+    color:black;
+    outline:none;
+}
+
+.int_area label{
+    position: absolute;
+    left: 10px;
+    top:15px;
+    font-size: 18px;
+    color:#999;
+    transition: all .5s ease;;
+    pointer-events: none;
+}
+
+@keyframes warning {
+    0% { transform: translate(-9px); }
+    25% { transform: translate(9px); }
+    50% { transform: translate(-9px); }
+    75% { transform: translate(9px); }
+}
+.int_area label.warning {
+    color: red !important;
+    animation: warning 0.3s ease; /* 애니메이션 시간을 설정해줍니다 */
+    animation-iteration-count: 3;
+}
+
+.int_area input:focus + label,
+.int_area input:valid + label{
+    top:-5px;
+    font-size: 15px;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.btn_area{
+    margin-top: 50px;
+}
+.btn_area button{
+    width: 100%;
+    height:50px;
+    background: var(--primary-color);
+    color:#fff;
+    font-size:20px;
+    border:none;
+    border-radius:15px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn_area button:disabled {
+    background: #999;
+    cursor: not-allowed;
+}
+
+.caption{
+    margin-top : 20px;
+    text-align:center;
+}
+.caption a{
+    font-size:15px; color: #999;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.error_message{
+    color: red;
+}
+
+  .disabled_btn {
+    background: gray;
+  }
+
+  .button{
+    padding-right: 10px;
+    padding-left: 10px;
+    height:35px;
+    background: #59B95F;
+    color:#fff;
+    font-size:17px;
+    border:none;
+    border-radius:15px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.back{
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0);
+    background-color: white;
+    font-size: 20px;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    outline: none;
+}
+
+.bx.bx-x-circle{
+    position: absolute;
+    font-size: 24px;
+    right: 0;
+    top: -7px;
 }
