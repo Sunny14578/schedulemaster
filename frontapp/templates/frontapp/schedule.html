@@ -26,17 +26,17 @@
                     <i class='bx bx-search icon'></i>
                     <input type="search" placeholder="Search...">
                 </li> -->
-                <ul class="menu-links">
+                <ul class="menu-links">       
                     <li class="nav_link teacher">
                         <a class="nav a close">
-                            <i class='bx bx-pencil icon teacher'></i>
-                            <span class="text nav-text teacher">강사</span>
+                            <i class='bx bx-pencil icon close'></i>
+                            <span class="text nav-text close">강사</span>
                         </a>
                     </li>
                     <li class="nav_link room">
-                        <a class="nav a close room">
-                            <i class='bx bx-building-house icon room'></i>
-                            <span class="text nav-text room">강의장</span>
+                        <a class="nav a close">
+                            <i class='bx bx-building-house icon close'></i>
+                            <span class="text nav-text close">강의장</span>
                         </a>
                     </li>
     
@@ -55,7 +55,7 @@
         </div>
     </nav>
 
-    <nav class="sidebar2 close close2" id ="teacher">
+    <nav class="sidebar2 close close2" id ="sidebar_teacher">
         <header>
             <div class="image-text">
                 <div class="text header-text">
@@ -76,9 +76,54 @@
         </ul>
     </nav>
 
+    <nav class="sidebar2 close close2" id ="sidebar_room">
+        <header>
+            <div class="image-text">
+                <div class="text header-text">
+                    <span class="name">강의장 현황</span> 
+                    <span class="profession">Lecture hall Status</span>
+                </div>
+            </div>
+
+            <i class='bx bx-user-plus toggle2'></i>
+        </header>
+        <ul class="menu-links">
+            <li class="nav_link room">
+                <a class="nav a close">
+                    <span class='text nav-text name'></span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
     <section class="home">
-        <div class="text">Dash</div>
+        <div class="text"></div>
     </section>
+
+    <div class="modal hidden">
+        <section class="login_form">
+            <i class='bx bx-x-circle exit'></i>
+            <div class="int_area">
+                <input type="text" name="email" id="email" autocomplete="off" required></input>
+                <label for="email" class="{showWarning ? 'warning' : ''}">EMAIL</label>
+            </div>
+            <div class="int_area">
+                <input type="text" name="name" id="name" autocomplete="off" required></input>
+                <label for="name" class="{showWarning ? 'warning' : ''}">NAME</label>
+            </div>
+            <div class="int_area">
+                <input type="password" name="password" id="password" autocomplete="off" required></input>
+                <label for="password" class="{showWarning ? 'warning' : ''}">PASSWORD</label>
+            </div>
+            <div class="int_area">
+                <input type="text" name="phonenumber" id="phonenumber" autocomplete="off" required></input>
+                <label for="phonenumber" class="{showWarning ? 'warning' : ''}">PHONE NUMBER</label>
+            </div>
+            <div class="btn_area">
+                <button type="submit" onclick="onDataPost()">회원가입</button>
+            </div>
+        </section>
+    </div>
 
     <script src="{% static 'js/schedule.js' %}"></script>
 </body>
