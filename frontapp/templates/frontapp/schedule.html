@@ -44,10 +44,10 @@
             </div>
 
             <div class="bottom-content">
-                <li class="">
+                <li class="logout">
                     <a href="#">
                         <i class='bx bx-log-out icon' ></i>
-                        <span class="text nav-text">로그아웃</span>
+                        <span class="text nav-text logout">로그아웃</span>
                     </a>
                 </li>
             </div>
@@ -69,8 +69,8 @@
         <ul class="menu-links">
             <li class="nav_link teacher">
                 <a class="nav a close">
-                    <span class='text nav-text name'></span>
-                    <span class="text nav-text color"></span>
+                    <span class='text nav-text name'>최태양</span>
+                    <input class="nav-color color" type="color">
                 </a>
             </li>
         </ul>
@@ -85,13 +85,11 @@
                 </div>
             </div>
 
-            <i class='bx bx-user-plus toggle2'></i>
+            <i class='bx bx-user-plus toggle room'></i>
         </header>
         <ul class="menu-links">
             <li class="nav_link room">
-                <a class="nav a close">
-                    <span class='text nav-text name'></span>
-                </a>
+     
             </li>
         </ul>
     </nav>
@@ -121,6 +119,19 @@
             </div>
             <div class="btn_area">
                 <button type="submit" onclick="onDataPost()">회원가입</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal hidden" id = "lecture_modal">
+        <section class="login_form">
+            <i class='bx bx-x-circle exit room'></i>
+            <div class="int_area">
+                <input type="text" name="room" id="room_name" autocomplete="off" required></input>
+                <label for="room_name" class="{showWarning ? 'warning' : ''}">강의장 이름</label>
+            </div>
+            <div class="btn_area">
+                <button type="submit" onclick="onDataLecturePost()">등록</button>
             </div>
         </section>
     </div>

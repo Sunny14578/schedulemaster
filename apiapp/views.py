@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from .serializers import *
 from rest_framework.views import APIView
-from .models import User
+from .models import User, LectureRoom
 import jwt
 from django.contrib.auth import authenticate
 from pathlib import Path
@@ -141,10 +141,36 @@ class AuthAPIView(APIView):
 ### 기업생성
 
 @api_view(['POST'])
-def Create_company(request):
+def Create_Company(request):
     if request.method == 'POST':
         serializer = CompanySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# @api_view(['POST'])
+# def Create_Lecture(request):
+#     if request.method == 'POST':
+#         serializer = LectureSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response({
+#                 "message" : 1
+#             })
+#         return Response({
+#                 "message" : 0
+#             })
+    
+class LectureAPIView(APIView):
+    def get(self, request):
+        lectures = LectureRoom.objects.all()  # 데이터베이스에서 모든 강의 데이터 가져오기
+        serializer = LectureSerializer(lectures, many=True)  # 시리얼라이즈된 데이터 생성
+        return Response(serializer.data)  # 시리얼라이즈된 데이터를 응답으로 반환
+
+    def post(self, request):
+        serializer = LectureSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": 1}, status=status.HTTP_201_CREATED)
+        return Response({"message": 0}, status=status.HTTP_400_BAD_REQUEST)

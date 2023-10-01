@@ -1,9 +1,14 @@
 from rest_framework import serializers
-from .models import User, Company
+from .models import User, Company, LectureRoom
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
+        fields = '__all__'
+
+class LectureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LectureRoom
         fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):

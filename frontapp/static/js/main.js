@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     // 토큰 정보 가져오기
+    console.log(3);
     const token = localStorage.getItem('authToken');
 
     const userLink = document.getElementById('user-a');

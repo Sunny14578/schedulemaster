@@ -1,10 +1,24 @@
-/* @font-face{
-    font-family: a;
-    src : url(../fonts/abster-webfont.woff);
-} */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;700&display=swap');
 
-* {
-    margin : 0;
+:root{
+    /* Colors */
+    --body--color: #E4E9F7;
+    --sidebar-color: #FFF;
+    --primary-color: #695CFE;
+    --primary-color-light: #F6F5FF;
+    --toggle-color: #DDD;
+    --text-color: #707070;
+
+    /* Transition */
+    --tran-02: all 0.2s ease;
+    --tran-03: all 0.3s ease;
+    --tran-04: all 0.4s ease;
+    --tran-05: all 0.5s ease;
+}
+
+*{
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
@@ -15,11 +29,9 @@ header{
     height: 100px;
     margin:0 auto;
     display: flex;
-    
     align-items: center;
     z-index:100;
     position : sticky;
-    background-color : white;
     top : 0px;
     /* align-item 영역의 수직방향 중앙에 위치시킨다. */
 }
@@ -56,7 +68,7 @@ nav > ul > li > a{
 }
 
 nav > ul > li > a:hover{
-    color : wheat;
+    color : var(--primary-color);
     cursor: pointer;
 }
 
