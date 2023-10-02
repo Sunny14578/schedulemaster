@@ -25,6 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True, null=False, blank=False)  # 이메일 주소
     name = models.CharField(max_length=255)  # 사용자 이름
     password = models.CharField(max_length=255)  # 비밀번호
+    color = models.CharField(max_length=255, default="#000000") # 강사 색깔
     phone_number = models.CharField(max_length=20)  # 전화번호
     role = models.CharField(max_length=50)  # 사용자 역할 ( 예: 관리자(1), 직원(2) )
     company_id = models.ForeignKey('Company', on_delete=models.CASCADE)  # 소속 기업 ID (외래 키)
