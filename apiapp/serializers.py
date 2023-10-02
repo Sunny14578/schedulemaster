@@ -22,6 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
             name = validated_data['name'],
             password = validated_data['password'],
             phone_number = validated_data['phone_number'],
+            color = "#000000",
             role = validated_data['role'],
             company_id = validated_data['company_id']
         )
