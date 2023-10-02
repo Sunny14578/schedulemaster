@@ -149,19 +149,14 @@ def Create_Company(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-# @api_view(['POST'])
-# def Create_Lecture(request):
-#     if request.method == 'POST':
-#         serializer = LectureSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response({
-#                 "message" : 1
-#             })
-#         return Response({
-#                 "message" : 0
-#             })
+
+class TeacherAPIView(APIView):
+    def get(self, request):
+        teachers = User.objects.filter(role=2).order_by("name")  # 데이터베이스에서 모든 강의 데이터 가져오기
+        serializer = UserSerializer(teachers, many=True)  # 시리얼라이즈된 데이터 생성
+        return Response(serializer.data)  # 시리얼라이즈된 데이터를 응답으로 반환
     
+
 class LectureAPIView(APIView):
     def get(self, request):
         lectures = LectureRoom.objects.all()  # 데이터베이스에서 모든 강의 데이터 가져오기
