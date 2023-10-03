@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from .serializers import *
 from rest_framework.views import APIView
-from .models import User, LectureRoom
+from .models import User, LectureRoom, ScheduleCell
 import jwt
 from django.contrib.auth import authenticate
 from pathlib import Path
@@ -165,6 +165,20 @@ class LectureAPIView(APIView):
 
     def post(self, request):
         serializer = LectureSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": 1}, status=status.HTTP_201_CREATED)
+        return Response({"message": 0}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ScheduleAPIView(APIView):
+    def get(self, request):
+        cells = ScheduleCell.objects.all()
+        serializer = ScheduleSerializer(cells, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = ScheduleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({"message": 1}, status=status.HTTP_201_CREATED)
