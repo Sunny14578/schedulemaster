@@ -78,9 +78,9 @@ class UserSchedule(models.Model):
 class ScheduleCell(models.Model):
     schedule_cell = models.AutoField(primary_key=True)
     lecture_room_id = models.ForeignKey(LectureRoom, on_delete=models.CASCADE) # 강의장 ID
-    cell_content = models.TextField() # 셀 내용
-    border = models.CharField(max_length=255) # 테두리 (예: 테두리 스타일, 두께 등)
-    background_color = models.CharField(max_length=255) # 배경색
+    cell_content = models.TextField(default="") # 셀 내용
+    border = models.CharField(default="1px solid #DDD", max_length=255) # 테두리 (예: 테두리 스타일, 두께 등)
+    background_color = models.CharField(default="white", max_length=255) # 배경색
     colspan_st = models.IntegerField(default=1) # 셀 합치기 값 (예: colspan, rowspan)
     rowspan_st = models.IntegerField(default=1)
     colspan_en = models.IntegerField(default=1)
