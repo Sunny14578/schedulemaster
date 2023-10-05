@@ -66,7 +66,7 @@ body{
     margin-right: 15px;
 } 
 
-.sidebar2 .menu-links .nav_link.room a span{
+.sidebar2 .menu-links .nav_link a span{
     color: var(--text-color);
 }
 
@@ -92,12 +92,13 @@ body{
     width: 250px;
     padding: 10px 14px;
     background: var(--sidebar-color);
-    transition: var(--tran-05);
+    transition: var(--tran-03);
     z-index: 50;
 }
 
 .sidebar2.close{
-    display: none;
+    visibility: hidden;
+    opacity: 0;
 }
 
 .sidebar2.close2{
@@ -122,7 +123,6 @@ body{
 
 .sidebar2 li{
     height: 50px;
-    margin-top: 10px;
     list-style: none;
     display: flex;
     align-items: center;
@@ -291,24 +291,139 @@ header .image-text .header-text{
 }
 
 .home{
-    position: relative;
-    left: 250px;
-    height: 100vh;
+    position: absolute;
+    left: 240px; 
+    height: 100%;
     width: calc(100% - 250px);
     background-color: var(--body--color);
-    transition: var(--tran-05);
+    transition: var(--tran-02);
 }
 
 .home .text{
     font-size: 30px;
     font-weight: 500;
-    color: var(--t);
+    color: var(--text-color);
+}
+
+.home .quick-menu{
+    margin-top: 18px;
+    margin-left: 72px;
+    width: 94%;
+    height: 50px;
+    border-radius: 20px;
+    background-color: var(--sidebar-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.quick-menu .icon{
+    width: 30px;
+    height: 30px;
+    font-size: 30px;
+    margin-right: 20px;
+}
+
+.quick-menu .icon.border{
+    margin-left: 12px;
+    margin-right: 0px;
+}
+
+.quick-menu .icon.arrow{
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
 }
 
 .sidebar.close ~ .home{
-    left: 88px;
-    width: calc(100% - 88px);
+    left: 148px;
+    width: calc(100% - 148px);
 }
+
+.sidebar.close ~ .home.close{
+    left: 398px;
+    width: calc(100% - 398px);
+}
+
+.sidebar ~ .home{
+    left: 310px;
+    width: calc(100% - 310px);
+}
+
+.sidebar ~ .home.close{
+    left: 560px;
+    width: calc(100% - 560px);
+}
+
+/* sheet */
+.sheet{
+    width: 95%;
+    height: 95%;
+    background-color: white;
+}
+
+.main-schedule{
+    overflow: auto;
+    margin-top: 20px;
+    display: flex;
+    height: 850px;
+    background-color: white;
+}
+
+.lecture_room{
+    margin-top: 45px;
+    margin-right: 5px;
+}
+
+.lecture_room li{
+    width: 70px;
+    height: 196.75px;
+    list-style-type: none;
+    background-color: white;
+    margin-left: 2px;
+    box-shadow: 0 0 0 2px #000;
+    margin-bottom: 1px;
+    display: flex; /* 플렉스 컨테이너 설정 */
+    justify-content: center; /* 수평 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+    text-align: center;
+}
+
+.lecture_room li:nth-child(even){
+    margin-bottom: 45px;
+}
+
+table thead tr:nth-child(1) td{
+    text-align: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--sidebar-color);
+    border: 1px solid;
+    border-color: black;
+}
+
+table thead tr:nth-child(2) td{
+    text-align: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--sidebar-color);
+    border: 1px solid;
+    border-color: black;
+}
+
+table td{
+    border: 1px solid;
+    border-color: var(--toggle-color);
+    width: 18px;
+    height: 18px;
+}
+
+
+.row-block{
+    background-color: var(--toggle-color);
+}
+
+
 
 /* modal */
 div.modal{
