@@ -178,8 +178,31 @@ class ScheduleAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = ScheduleSerializer(data=request.data)
+        serializer = ScheduleSerializer(data=request.data, many=True)
         if serializer.is_valid():
             serializer.save()
             return Response({"message": 1}, status=status.HTTP_201_CREATED)
-        return Response({"message": 0}, status=status.HTTP_400_BAD_REQUEST)
+        
+        errors = serializer.errors
+
+        return Response({"message": errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request, pk):
+        try:
+            schedule_cell = ScheduleCell.objects.get(pk=pk)
+        except ScheduleCell.DoesNotExist:
+            return Response({"error": "ScheduleCell does not exist"}, status=404)
+
+        serializer = ScheduleSerializer(schedule_cell, data=request.POST)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    def delete(self, request, pk):
+        try:
+            schedule_cell = ScheduleCell.objects.get(pk=pk)
+            schedule_cell.delete()
+            return Response({"message": "ScheduleCell deleted"}, status=204)
+        except ScheduleCell.DoesNotExist:
+            return Response({"error": "ScheduleCell does not exist"}, status=404)
