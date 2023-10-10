@@ -1,5 +1,6 @@
 {% load static %}
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" type = "text/css" href="{% static 'css/schedule.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
@@ -96,7 +97,7 @@
             <i class='bx bx-merge icon'></i>
             <i class='bx bxs-color-fill icon'></i>
             <i class='bx bx-memory-card icon'></i>
-            <i class='bx bx-plus icon'></i>
+            <i class='bx bx-plus icon plus'></i>
         </div>
 
         <div class="main-schedule">
@@ -149,6 +150,20 @@
             </div>
         </section>
     </div>
+
+    <div class="modal hidden" id = "border_modal">
+        <div class = "border-menu">
+            <i class='bx bx-border-right icon' ></i>
+            <i class='bx bx-border-left icon' ></i>
+            <i class='bx bx-border-top icon' ></i>
+            <i class='bx bx-border-bottom icon' ></i>
+            <i class='bx bx-border-none icon' ></i>
+            <i class='bx bx-border-all icon' ></i>
+            <i class='bx bx-border-outer icon'></i>
+        </div>
+    </div>
+
+
 
     <script src="{% static 'js/schedule.js' %}"></script>
 </body>
