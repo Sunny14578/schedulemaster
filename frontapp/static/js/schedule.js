@@ -1,5 +1,7 @@
 var indexTime = ["08:00:00","09:00:00","10:00:00","11:00:00","12:00:00","13:00:00","14:00:00","15:00:00","16:00:00","17:00:00"];
 var bgcolor = ["#5F00FF", "#003399", "#FF5E00", "#22741C", "#F15F5F", "#D941C5", "#5D5D5D", "#664B00", "#5F00FF", "#003399", "#FF5E00", "#22741C"];
+var monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+const modifiedTdIds = [];
 const body = document.querySelector("body"),
     sidebar = body.querySelector(".sidebar"),
     toggle = body.querySelector(".toggle"),
@@ -20,7 +22,158 @@ const body = document.querySelector("body"),
     teacher_menu = body.querySelector("#sidebar_teacher .menu-links"),
     table_lecture_room = body.querySelector(".lecture_room"),
     table = body.querySelector(".cell-table"),
-    main_body = body.querySelector(".home.table-menu");
+    main_body = body.querySelector(".home.table-menu"),
+    table_tools = body.querySelectorAll(".border-menu i"),
+
+    // icon
+    plus_icon = body.querySelector(".bx.bx-plus.icon.plus");
+
+    plus_icon.addEventListener("click", async() =>{
+        plusMonthCreateCell();
+    })
+
+    border_modal = body.querySelector("#border_modal");
+    border_icon = body.querySelector('.bx.bx-border-all.icon.border');
+    borderAdd_icon = body.querySelector('.bx.bx-chevron-down.icon.arrow');
+    borderAdd_icon.addEventListener("click", async() =>{
+        const iconRect = borderAdd_icon.getBoundingClientRect();
+    
+        // 모달 창의 너비와 높이를 가져오기
+        const modalWidth = border_modal.offsetWidth;
+        const modalHeight = border_modal.offsetHeight;
+
+        // 모달 창의 위치 계산
+        const left = iconRect.right + window.scrollX; // 클릭한 요소의 오른쪽
+        const bottom = iconRect.bottom + window.scrollY + 30; // 클릭한 요소의 위
+
+        // 모달 창의 위치 설정
+        border_modal.style.left = left + "px";
+        border_modal.style.top = bottom + "px";
+
+        border_modal.classList.toggle("hidden");
+    })
+
+ 
+    // icon event end //
+
+
+    // table td event
+    let selectedTd = null;
+
+    table.addEventListener("click", function(event) {
+        
+        const clickedElement = event.target;
+        // 클릭한 요소가 td 요소인 경우만 처리
+        if (clickedElement.tagName === "TD") {
+            console.log(clickedElement, "클릭됨");
+
+            if (selectedTd){
+                selectedTd.style.border = "";
+            }
+            clickedElement.contentEditable = true;
+
+        // 클릭한 td 요소에 포커스를 줌
+        clickedElement.focus();
+
+        // td 요소에서 포커스가 빠져나갈 때 처리
+        clickedElement.addEventListener("blur", function() {
+            // td 요소의 내용을 편집 불가능 상태로 변경
+            clickedElement.contentEditable = false;
+        });
+
+        const tdId = clickedElement.getAttribute("id");
+        console.log(tdId);
+
+        // td 요소에서 키 입력 이벤트 처리
+        clickedElement.addEventListener("keydown", function(event) {
+            // 엔터 키를 누르면 편집 모드를 끝내고 값을 적용
+            if (event.key === "Enter"){
+                event.preventDefault(); // 엔터 키의 기본 동작 방지
+                clickedElement.contentEditable = false; // 편집 모드 종료
+                // modifiedTdIds.push(tdId);
+            }
+        });
+    
+            clickedElement.style.border = "2px solid #695CFE";
+            selectedTd = clickedElement;
+        }
+    });
+    // event end
+
+    // mouse block designation
+    let idsMouseDown = false;
+    let startTd = null;
+    let endTd = null;
+    let startRowIndex, startColIndex, endRowIndex, endColIndex;
+    let selectedTds = [];
+    let mouseDownTimer;
+
+    table.addEventListener("mousedown", (event) => {
+        deselectTds();
+        const clickedElement = event.target
+
+        mouseDownTimer = setTimeout(function() {
+            if (clickedElement.tagName == "TD"){
+                idsMouseDown = true;
+                startTd = clickedElement;
+                endTd = clickedElement;
+                
+                const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
+    
+                startRowIndex = endRowIndex = clickedElement.parentElement.rowIndex;
+                startColIndex = endColIndex = tdIndex;
+                
+                selectedTds.push(clickedElement);
+                clickedElement.classList.toggle("selected");
+            }
+        }, 500);
+    });
+
+    table.addEventListener("mousemove", (event) => {
+        const clickedElement = event.target
+        if (clickedElement.tagName == "TD" && idsMouseDown){
+            if(selectedTds[0] != event.target){
+                const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
+                endRowIndex = clickedElement.parentElement.rowIndex;
+                endColIndex = tdIndex;
+
+                selectTds();
+            }
+        }
+    });
+
+    table.addEventListener("mouseup", () => {
+        clearTimeout(mouseDownTimer);
+        idsMouseDown = false;
+        console.log(selectedTds);
+    });
+
+    function selectTds() {
+        selectedTds.forEach((td) => {
+          td.classList.toggle("selected");
+        });
+      
+        selectedTds = [];
+      
+        // 선택된 영역의 TD 선택
+        for (let i = Math.min(startRowIndex, endRowIndex); i <= Math.max(startRowIndex, endRowIndex); i++) {
+          const row = table.rows[i];
+          for (let j = Math.min(startColIndex, endColIndex); j <= Math.max(startColIndex, endColIndex); j++) {
+            const td = row.cells[j];
+            selectedTds.push(td);
+            td.classList.toggle("selected");
+          }
+        }
+      } 
+
+      function deselectTds() {
+        // 모든 선택된 TD 초기화
+        selectedTds.forEach((td) => {
+          td.classList.remove("selected");
+        });
+        selectedTds = [];
+      }
+
     
     toggle.addEventListener("click", () =>{
         sidebar.classList.toggle("close");
@@ -110,9 +263,6 @@ const body = document.querySelector("body"),
                     side.className = "text nav-text close"
                 }
             })
-
-            
-          
         })
     })
 
@@ -181,10 +331,9 @@ function onDataPost() {
         }
     });
 
-function onDataLecturePost() {
+async function onDataLecturePost() {
     const roomInput = document.querySelector('#room_name').value;
    
-        
     const token = localStorage.getItem('authToken');
     let userdata = 1;
     
@@ -198,44 +347,49 @@ function onDataLecturePost() {
         company_id: userdata.company_id,
     };
         
+    try{
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
         
-    fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    })
-    .then(response => response.json())
-    .then(data => {
-            // console.log('서버 응답 데이터:', data);
-            // 로그인 성공 또는 실패 여부를 처리
-        if (data.message) {
-            console.log('회원가입 성공');
+        if (!response.ok) {
+            throw new Error('데이터를 불러오는 데 실패했습니다.');
+        }
+
+        const responseData = await response.json();
+        
+        if (responseData.message) {
             roomInput.value = "";
- 
+            console.log(responseData.data.room_id);
+            onCreateCell(responseData.data.room_id);
+           
         } else {
             const labelElement = document.querySelector('label[for="room_name"]');
-                
+
             if (labelElement) { // label 요소가 존재하는지 확인
                 labelElement.classList.add('warning');
             }
         }
-    })
-    .catch(error => {
-        console.error('에러 발생:', error);
-    });
+    } catch (error){
+        console.error("에러 발생:", error);
     }
+}
+    
         // 전체 화면에서 키 입력을 감지
     window.addEventListener('keydown', function(event) {
         if (event.keyCode === 13 && lecture_modal.classList.toString() === "modal") {
             onDataLecturePost(); // 
+        } else if (event.keyCode === 13 && plus_modal.classList.toString() === "modal"){
+            console.log("하하");
         }
     });
 
     window.onload = function(){
         onDataLectureRoomGet();
-        // onCreateCell();
         onDataCellGet();
     }
 
@@ -269,6 +423,7 @@ function onDataLectureGet(){
             new_atag.appendChild(new_span);
             lecture_room_menu.appendChild(new_litag);
         }
+        console.log("호출완료");
     })
     .catch(error => {
         console.error('에러 발생:', error);
@@ -318,6 +473,43 @@ function onDataTeacherGet(){
     });
 }
 
+
+async function onDataLectureRoomGettest() {
+    const apiUrl = '/api/lecture/';
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('데이터를 불러오는 데 실패했습니다.');
+        }
+
+        const data = await response.json();
+        const roomNames = data.map(item => item.room_name);
+        const roomIdNames = data.map(item => item.room_id);
+        console.log(roomIdNames, "확인");
+        localStorage.setItem('roomIdNames', roomIdNames);
+    
+        const table_lecture_room_test = document.querySelector('.lecture_room');
+
+        for (var i = 0; i < roomNames.length; i++) {
+            var new_litag = document.createElement("li");
+            new_litag.contentEditable = true;
+            new_litag.textContent = roomNames[i];
+
+            table_lecture_room_test.appendChild(new_litag);
+        }
+    } catch (error) {
+        console.error('에러 발생:', error);
+    }
+}
+
+
 function onDataLectureRoomGet(){
     const apiUrl = '/api/lecture/';
 
@@ -333,7 +525,7 @@ function onDataLectureRoomGet(){
         table_lecture_room.innerHTML = '';
         const roomNames = data.map(item => item.room_name);
         const roomIdNames = data.map(item => item.room_id);
-
+        console.log(roomIdNames);
         localStorage.setItem('roomIdNames', roomIdNames);
 
         for (var i=0; i<roomNames.length; i++){
@@ -351,25 +543,40 @@ function onDataLectureRoomGet(){
 
 function onCreateCell(lecture_room_id){
 
-    const apiUrl = '/api/schedule/'; 
-
     var monthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     
     data_group = [] // post 요청을 줄이기위해 데이터 그룹화
+   
+    const maxMonthList = localStorage.getItem("maxMonthList");
+    const minMonthList = localStorage.getItem("minMonthList");
+    const yearListString = localStorage.getItem("yearList");
+    const yearList = JSON.parse(yearListString);
 
-    for (let index = 0; index < indexTime.length; index++){
-        for (let day = 1; day <= monthsDays[0]; day++){
-            data = {
-                "lecture_room_id":6,
-                "day":day,
-                "month":1,
-                "time":indexTime[index]
+    const yearMaxMonthList = maxMonthList.split(",").slice(0,yearList.length);
+    const yearminMonthList = minMonthList.split(",").slice(0,yearList.length);
+
+    for (let yy = 0; yy < yearList.length; yy++){
+        if (isLeapYear((yearList[yy]))){
+            monthsDays[1] = 29
+        }
+        for (let month = parseInt(yearminMonthList[yy]); month < parseInt(yearMaxMonthList[yy])+1; month++){
+            for (let index = 0; index < indexTime.length; index++){
+                for (let day = 1; day <= monthsDays[month-1]; day++){
+                    data = {
+                        "lecture_room_id":lecture_room_id,
+                        "day":day,
+                        "month":month,
+                        "time":indexTime[index],
+                        "year":yearList[yy]
+                    }
+                    console.log(data);
+                    
+                data_group.push(data);
+                }
             }
-
-        data_group.push(data);
         }
     }
-    
+    onDataLectureRoomGet();
     postData(data_group);
 }
 
@@ -385,9 +592,12 @@ async function postData(dataList) {
             body: JSON.stringify(dataList), 
         });
 
+        console.log(response);
+
         if (response.ok) {
             const responseData = await response.json();
             console.log('데이터 전송 성공:', responseData);
+            onDataCellGet();
         } else {
             console.error('데이터 전송 실패:', response.status, response.statusText);
         }
@@ -396,54 +606,171 @@ async function postData(dataList) {
     }
 }
 
+// 달 추가
+function plusMonthCreateCell(){
+    let maxMonth = parseInt(localStorage.getItem('maxMonth'));
+    const yearListString = localStorage.getItem("yearList");
+    let yearList = JSON.parse(yearListString);
+    
+    if (maxMonth==12){
+        yearList.push(yearList[yearList.length-1]+1);
+        maxMonth=0;
+    }
+    
+    const lastYear = (yearList[yearList.length-1]);
+
+    var monthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+    const rooms = localStorage.getItem('roomIdNames');
+    const splitRooms = rooms.split(',');
+    console.log(splitRooms);
+    console.log(typeof splitRooms[0]);
+
+    data_group = []
+
+    if (isLeapYear(lastYear)){
+        monthsDays[1] = 29
+    }
+
+    console.log(maxMonth, "월");
+    for (let room_id = 0; room_id < splitRooms.length; room_id++){
+        for (let month = maxMonth; month < maxMonth+2; month++){
+            for (let index = 0; index < indexTime.length; index++){
+                for (let day = 1; day <= monthsDays[month]; day++){
+                    data = {
+                        "lecture_room_id":parseInt(splitRooms[room_id]),
+                        "day":day,
+                        "month":month+1,
+                        "time":indexTime[index],
+                        "year":lastYear
+                    }
+                    data_group.push(data);
+                }
+            }
+        }
+    }
+
+    postData(data_group);
+}
+// 윤년판단
+
+function isLeapYear(year) {
+    // 4로 나누어 떨어지는 연도 중에서
+    // 100으로 나누어 떨어지지 않거나 400으로 나누어 떨어지는 경우 윤년
+    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+}
+
 function onDataCellGet(){
     const apiUrl = '/api/schedule/';
 
-    fetch(apiUrl, {
-        method: 'get',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
+    $.ajax({
+        url: apiUrl,
+        type: 'GET',
+        dataType:'json',
+        success: function (data){
+        table.innerHTML = '';
         var monthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
         const rooms = localStorage.getItem('roomIdNames');
         const splitRooms = rooms.split(',');
-        const months = data.map(item => item.month);
+        const years = data.map(item => item.year);
+        const maxYear = Math.max(...years);
+        const minYear = Math.min(...years);
+
+        const yearList = [];
+        const maxMonthList = [];
+        const minMonthList = [];
+
+        for (let yy = minYear; yy <= maxYear; yy++) {
+            yearList.push(yy);
+        }
+
+        localStorage.setItem('yearList', JSON.stringify(yearList));
+
+        const maxYeardata = data.filter(item => item.year == maxYear);
+        const months = maxYeardata.map(item => item.month);
         const maxMonth = Math.max(...months);
+
+        const minYeardata = data.filter(item => item.year == minYear);
+        const months2 = minYeardata.map(item => item.month);
+        const minMonth = Math.min(...months2);
+
+        localStorage.setItem('maxMonth', maxMonth);
+        localStorage.setItem('minMonth', minMonth);
+
         let thead;
 
         for (let i = 0; i < splitRooms.length; i++){
             const FilterData = data.filter(item => item.lecture_room_id == splitRooms[i]);
             
-            if (FilterData.length > 0){
+            if (FilterData.length > 0){ 
                 if (i%2==0){
                     thead = document.createElement('thead');
-                    const theadRowFragment = document.createDocumentFragment();
+                    
                     const FilterRowData = FilterData.filter(item => item.time == indexTime[0]);
                     const cols = FilterRowData.length;
-
+    
                     const tr = document.createElement('tr');
-                    
-                    for (let j = 0; j < cols; j++){
-                        const td = document.createElement('td');
-                        td.textContent = FilterRowData[j].day;
-                        theadRowFragment.appendChild(td);
-                    }
-                    
-                
+                    const theadRowFragment = document.createDocumentFragment();
+
                     const tr2 = document.createElement('tr');
                     const theadRowFragment2 = document.createDocumentFragment();
+                    let MonthCnt = 0;   
+                    let maxMonth2 = 0;
+                    let minMonth2 = 0;
                     
-                    for (let m = 0; m < maxMonth; m++){
-                        const td2 = document.createElement('td');
-                        td2.textContent = m+1+"월";
-                        td2.setAttribute('colspan', monthsDays[m]);
-                        theadRowFragment2.appendChild(td2);
-                        tr.style.backgroundColor = bgcolor[m];
-                        tr2.style.backgroundColor = bgcolor[m];
+                    for (let year = 0; year < yearList.length; year++){
+                        
+                        if (year == yearList.length-1){
+                            MonthCnt = maxMonth;
+                        }else{
+                            MonthCnt = 12
+                        }
+
+                        if (isLeapYear(yearList[year])){
+                            monthsDays[1] = 29
+                        }else{
+                            monthsDays[1] = 28
+                        }
+
+                        const FilterYearData = FilterRowData.filter(item => item.year == yearList[year]);
+                        const months = FilterYearData.map(item => item.month);
+                        maxMonth2 = Math.max(...months);
+
+                        const months2 = FilterYearData.map(item => item.month);
+                        minMonth2 = Math.min(...months2);
+                        maxMonthList.push(JSON.stringify(maxMonth2));
+                        minMonthList.push(JSON.stringify(minMonth2));
+                        let monthRange = 0;
+
+                        if (maxMonth2 == minMonth2){
+                            monthRange = maxMonth2;
+                        }else{
+                            monthRange = maxMonth2;
+                        }
+                        
+                        for (let mm = minMonth2; mm < monthRange+1; mm++){
+                            const monthIndex = mm > 12 ? mm - 12 : mm;
+                            
+                            const FilteMonthData = FilterYearData.filter(item => item.month == monthIndex)
+                            
+                            for (let j = 0; j < monthsDays[monthIndex-1]; j++){
+                                const td = document.createElement('td');
+                                td.textContent = FilteMonthData[j].day;
+                                td.style.backgroundColor = bgcolor[monthIndex-1];
+                                theadRowFragment.appendChild(td);
+                            }
+                        }
+                        
+                        for (let m = minMonth2; m < monthRange+1; m++){
+                            const monthIndex = m > 12 ? m - 12 : m;
+
+                            const td2 = document.createElement('td');
+                            td2.textContent = monthIndex+"월";
+                            td2.setAttribute('colspan', monthsDays[monthIndex-1]);
+                            theadRowFragment2.appendChild(td2);
+                            td2.style.backgroundColor = bgcolor[monthIndex-1];
+                        }
                     }
                     tr.appendChild(theadRowFragment);
                     thead.appendChild(tr)
@@ -477,12 +804,18 @@ function onDataCellGet(){
                 }
                 table.appendChild(tbody);
             }
-            
-            
-            
         }
-    })
-    .catch(error => {
-        console.error('에러 발생:', error);
+
+        localStorage.setItem('maxMonthList', maxMonthList);
+        localStorage.setItem('minMonthList', minMonthList);
+
+        },
+        error: function (xhr, status, error){
+            console.error('데이터 가져오기 실패:', status, error);
+        }
     });
 }
+   
+  
+        
+ 
