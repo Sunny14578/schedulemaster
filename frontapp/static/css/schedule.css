@@ -207,6 +207,7 @@ header .image-text .header-text{
     color: var(--sidebar-color);
     font-size: 25px;
     transition: var(--tran-03);
+    cursor: pointer;
 }
 
 .sidebar.close header .toggle{
@@ -362,6 +363,15 @@ header .image-text .header-text{
     background-color: white;
 }
 
+table{
+    table-layout: fixed;
+}
+
+table td:hover{
+    background-color: var(--body--color);
+}
+
+
 .main-schedule{
     overflow: auto;
     margin-top: 20px;
@@ -411,11 +421,22 @@ table thead tr:nth-child(2) td{
     border-color: black;
 }
 
-table td{
+table tbody td{
     border: 1px solid;
     border-color: var(--toggle-color);
-    width: 18px;
-    height: 18px;
+    width: 18px !important;
+    height: 18px !important;
+    min-width: 18px;
+    min-height: 18px;
+    overflow: visible;
+    white-space: nowrap;
+    font-size:10px;
+    max-width: 18px;
+    font-weight: bold;
+}
+
+td.selected{
+    background-color: var(--body--color);
 }
 
 
@@ -423,7 +444,11 @@ table td{
     background-color: var(--toggle-color);
 }
 
-
+/* quick menu */
+.quick-menu i.icon:hover{
+    cursor: pointer;
+    background-color: var(--body--color);
+}
 
 /* modal */
 div.modal{
@@ -454,12 +479,35 @@ div.modal.hidden{
     background-size: cover;
     overflow:overlay;
     font-family: 'SUITE-Regular', sans-serif;
-    border-radius: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+}
+
+.exit{
+    cursor: pointer;
 }
 
 #lecture_modal{
     width:400px;
     height:250px !important;
+}
+
+#border_modal{
+    width:220px !important; 
+    height:50px !important;
+}
+
+#border_modal i{
+    font-size : 25px;
+}
+
+#border_modal div{
+    margin-top: 5px;
+}
+.border-menu a:hover{
+    cursor: pointer;
+    background-color: var(--body--color);
+    color: red;
 }
 
 .modal::before{
