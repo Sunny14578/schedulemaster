@@ -9,7 +9,7 @@ class CompanySerializer(serializers.ModelSerializer):
 class LectureSerializer(serializers.ModelSerializer):
     class Meta:
         model = LectureRoom
-        fields = '__all__'
+        fields = ('room_id', 'room_name', 'company_id')
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,7 +28,9 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
     
+
 class ScheduleSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = ScheduleCell
-        fields = '__all__'
+        fields = ('schedule_cell', 'cell_content', 'border', 'background_color', 'colspan_st', 'rowspan_st', 'colspan_en', 'rowspan_en', 'year', 'day', 'month', 'time', 'memo_content', 'lecture_room_id')

@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate
 from pathlib import Path
 import os, json
 from django.core.exceptions import ImproperlyConfigured
+from django.db import transaction
 # Create your views here.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -167,7 +168,7 @@ class LectureAPIView(APIView):
         serializer = LectureSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": 1}, status=status.HTTP_201_CREATED)
+            return Response({"message": 1, "data" : serializer.data}, status=status.HTTP_201_CREATED)
         return Response({"message": 0}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -178,14 +179,37 @@ class ScheduleAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = ScheduleSerializer(data=request.data, many=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": 1}, status=status.HTTP_201_CREATED)
+        data = request.data  # 요청 데이터 가져오기
+        lecture_room_ids = [item['lecture_room_id'] for item in data]
         
-        errors = serializer.errors
+        cells = ScheduleCell.objects.select_related('lecture_room_id').filter(lecture_room_id__in=lecture_room_ids)
+        cell_lookup = {cell.lecture_room_id.room_id: cell for cell in cells}
 
-        return Response({"message": errors}, status=status.HTTP_400_BAD_REQUEST)
+        if cell_lookup:
+            datas = []
+
+            for item in data:
+                room_id = item['lecture_room_id']
+                cell = cell_lookup.get(room_id)
+                item['lecture_room_id'] = cell.lecture_room_id
+                datas.append(ScheduleCell(**item))
+                
+            ScheduleCell.objects.bulk_create(datas)
+            return Response({"message": 1}, status=status.HTTP_201_CREATED)
+        else:
+            lecture_rooms = LectureRoom.objects.all()
+            last_room = lecture_rooms.last()
+            last_room_id = last_room.room_id
+            final_last_room = LectureRoom.objects.get(room_id=last_room_id)
+            datas = []
+
+            for item in data:
+                item['lecture_room_id'] = final_last_room
+                datas.append(ScheduleCell(**item))
+                
+            ScheduleCell.objects.bulk_create(datas)
+            return Response({"message": 1}, status=status.HTTP_201_CREATED)
+            
     
     def put(self, request, pk):
         try:
@@ -206,3 +230,4 @@ class ScheduleAPIView(APIView):
             return Response({"message": "ScheduleCell deleted"}, status=204)
         except ScheduleCell.DoesNotExist:
             return Response({"error": "ScheduleCell does not exist"}, status=404)
+

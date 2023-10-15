@@ -38,6 +38,13 @@ SECRET_KEY = get_secret("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DEBUG_TOOLBAR_CONFIG = {
+    # ...
+    'SHOW_TOOLBAR_CALLBACK': lambda request: True,
+}
+
+def custom_show_toolbar(request):
+    return True
 
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'apiapp.User'
@@ -53,6 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apiapp',
     'frontapp',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -63,9 +71,27 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'schedulemaster.urls'
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+    },
+}
 
 
 
@@ -138,6 +164,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+INTERNAL_IPS = ('127.0.0.1')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

@@ -23,7 +23,78 @@ const body = document.querySelector("body"),
     table_lecture_room = body.querySelector(".lecture_room"),
     table = body.querySelector(".cell-table"),
     main_body = body.querySelector(".home.table-menu"),
-    table_tools = body.querySelectorAll(".border-menu i"),
+    table_tools = body.querySelectorAll(".border-menu i");
+    
+    editCells = []
+
+    // tools
+    let preTool = null
+
+    table_tools.forEach((tool, index) =>{
+        tool.addEventListener("mouseover", ()=>{
+
+            if (preTool){
+                preTool.style.backgroundColor = "";
+            }
+            tool.style.backgroundColor = "#E4E9F7";
+            preTool = tool;
+        });
+
+        tool.addEventListener("click", ()=>{
+            if (index == 6){
+                let rowIndexList = []
+                let cellIndexList = []
+                console.log(selectedTds);
+                selectedTds.forEach((td)=>{
+                    const rowIndex = td.parentElement.rowIndex;
+                    const cellIndex = td.cellIndex;
+
+                    rowIndexList.push(rowIndex);
+                    cellIndexList.push(cellIndex);
+                })
+
+                const rowMax = Math.max(...rowIndexList);
+                const rowMin = Math.min(...rowIndexList);
+                const colMax = Math.max(...cellIndexList);
+                const colMin = Math.min(...cellIndexList);
+
+                console.log(rowMax, rowMin, colMax, colMin);
+
+                selectedTds.forEach((td, index)=>{
+                    const rowIndex = td.parentElement.rowIndex;
+                    const cellIndex = td.cellIndex;
+                    
+                    if (rowIndex == rowMin){
+                        td.style.borderTop = "2px solid black";
+                    }
+
+                    if (rowIndex == rowMax){
+                        td.style.borderBottom = "2px solid black";
+                    }
+
+                    if (cellIndex == colMin){
+                        td.style.borderLeft = "2px solid black";
+                    }
+
+                    if (cellIndex == colMax){
+                        td.style.borderRight = "2px solid black";
+                    }
+                })
+            }
+            border_modal.classList.toggle("hidden");
+        })
+        
+    });
+
+    // save icon
+    document.addEventListener("keydown", (event) => {
+        if (event.ctrlKey && event.key === "s") {
+            event.preventDefault(); // 기본 저장 동작을 막음 (브라우저에서의 저장)
+            console.log("저장~!");
+        }
+    });
+
+    // tools end
 
     // icon
     plus_icon = body.querySelector(".bx.bx-plus.icon.plus");
@@ -53,36 +124,109 @@ const body = document.querySelector("body"),
         border_modal.classList.toggle("hidden");
     })
 
- 
     // icon event end //
+
+    // teacher color add //
+    let teacher_check = false
+    let teacher_color = null
+
+    teacher_menu.addEventListener("click", function(evnet){
+        teacher_check = true
+        const clickedElement = event.target;
+        if (clickedElement.tagName === "A"){
+            const inputColor = clickedElement.querySelector("input[type='color']")
+            
+
+            if (inputColor) {
+                const colorValue = inputColor.value;
+                teacher_color = colorValue;
+                drawColorAtMousePosition(colorValue, event.clientX, event.clientY);
+            }
+        }
+    })
+
+    function drawColorAtMousePosition(color, x, y) {
+        const canvas = document.createElement("canvas");
+
+        canvas.width = 10; // 점의 너비
+        canvas.height = 10; // 점의 높이
+        const context = canvas.getContext("2d");
+        context.fillStyle = color;
+        context.beginPath();
+        context.arc(5, 5, 5, 0, 2 * Math.PI);
+        context.fill();
+    
+        canvas.style.position = "fixed";
+   
+        canvas.style.left = x + "px";
+        canvas.style.top = y + "px";
+    
+        document.body.appendChild(canvas);
+          // 마우스 이동 이벤트를 감지하여 canvas 위치 업데이트
+
+        document.addEventListener("mousedown", (event) => {
+            const clickedElement = event.target
+            if (clickedElement.tagName == "TD" && color){
+                clickedElement.style.backgroundColor = color;
+
+                editCells.push(clickedElement)
+                console.log(editCells);
+            }
+        })
+
+        document.addEventListener("mousemove", (event) => {
+            x = (event.clientX-5) - canvas.width / 2; // 마우스 X 좌표
+            y = (event.clientY-5) - canvas.height / 2; // 마우스 Y 좌표
+
+            // canvas 위치 업데이트
+            canvas.style.left = x + "px";
+            canvas.style.top = y + "px";
+        });
+
+        document.addEventListener("contextmenu", (event) => {
+            event.preventDefault(); // 기본 컨텍스트 메뉴를 표시하지 않음
+            teacher_color = null
+            document.body.removeChild(canvas); // canvas 제거
+          });
+    }
+
+   
+    //
 
 
     // table td event
+    function getBorderStyles(element) {
+        const computedStyle = window.getComputedStyle(element);
+        return {
+          borderTop: computedStyle.getPropertyValue("border-top"),
+          borderBottom: computedStyle.getPropertyValue("border-bottom"),
+          borderLeft: computedStyle.getPropertyValue("border-left"),
+          borderRight: computedStyle.getPropertyValue("border-right")
+        };
+      }
+      
     let selectedTd = null;
+    let preBorderStyle = null;
 
     table.addEventListener("click", function(event) {
         
         const clickedElement = event.target;
         // 클릭한 요소가 td 요소인 경우만 처리
-        if (clickedElement.tagName === "TD") {
-            console.log(clickedElement, "클릭됨");
-
-            if (selectedTd){
-                selectedTd.style.border = "";
-            }
+        if (clickedElement.tagName === "TD" && !teacher_color) {
+            preBorderStyle = getBorderStyles(clickedElement);
+            
             clickedElement.contentEditable = true;
 
         // 클릭한 td 요소에 포커스를 줌
-        clickedElement.focus();
+            clickedElement.focus();
 
-        // td 요소에서 포커스가 빠져나갈 때 처리
-        clickedElement.addEventListener("blur", function() {
-            // td 요소의 내용을 편집 불가능 상태로 변경
-            clickedElement.contentEditable = false;
-        });
+            // td 요소에서 포커스가 빠져나갈 때 처리
+            clickedElement.addEventListener("blur", function() {
+                // td 요소의 내용을 편집 불가능 상태로 변경
+                clickedElement.contentEditable = false;
+            });
 
-        const tdId = clickedElement.getAttribute("id");
-        console.log(tdId);
+            const tdId = clickedElement.getAttribute("id");
 
         // td 요소에서 키 입력 이벤트 처리
         clickedElement.addEventListener("keydown", function(event) {
@@ -96,6 +240,13 @@ const body = document.querySelector("body"),
     
             clickedElement.style.border = "2px solid #695CFE";
             selectedTd = clickedElement;
+
+            if (selectedTd){
+                selectedTd.style.borderTop = preBorderStyle.borderTop;
+                selectedTd.style.borderBottom = preBorderStyle.borderBottom;
+                selectedTd.style.borderLeft = preBorderStyle.borderLeft;
+                selectedTd.style.borderRight = preBorderStyle.borderRight;
+            }
         }
     });
     // event end
@@ -113,7 +264,7 @@ const body = document.querySelector("body"),
         const clickedElement = event.target
 
         mouseDownTimer = setTimeout(function() {
-            if (clickedElement.tagName == "TD"){
+            if (clickedElement.tagName == "TD" && !teacher_color){
                 idsMouseDown = true;
                 startTd = clickedElement;
                 endTd = clickedElement;
@@ -122,16 +273,25 @@ const body = document.querySelector("body"),
     
                 startRowIndex = endRowIndex = clickedElement.parentElement.rowIndex;
                 startColIndex = endColIndex = tdIndex;
-                
                 selectedTds.push(clickedElement);
                 clickedElement.classList.toggle("selected");
+            }else if (clickedElement.tagName == "TD" && teacher_color){
+                idsMouseDown = true;
+                startTd = clickedElement;
+                endTd = clickedElement;
+                
+                const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
+    
+                startRowIndex = endRowIndex = clickedElement.parentElement.rowIndex;
+                startColIndex = endColIndex = tdIndex;
+                selectedTds.push(clickedElement);
             }
-        }, 500);
+        }, 250);
     });
 
     table.addEventListener("mousemove", (event) => {
         const clickedElement = event.target
-        if (clickedElement.tagName == "TD" && idsMouseDown){
+        if (clickedElement.tagName == "TD" && idsMouseDown && !teacher_color){
             if(selectedTds[0] != event.target){
                 const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
                 endRowIndex = clickedElement.parentElement.rowIndex;
@@ -139,19 +299,36 @@ const body = document.querySelector("body"),
 
                 selectTds();
             }
+        }else if(clickedElement.tagName == "TD" && idsMouseDown && teacher_color){
+            if(selectedTds[0] != event.target){
+                const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
+                endRowIndex = clickedElement.parentElement.rowIndex;
+                endColIndex = tdIndex;
+
+                selectTds(teacher_color);
+            }
         }
     });
 
     table.addEventListener("mouseup", () => {
         clearTimeout(mouseDownTimer);
         idsMouseDown = false;
-        console.log(selectedTds);
     });
 
-    function selectTds() {
-        selectedTds.forEach((td) => {
-          td.classList.toggle("selected");
-        });
+    function selectTds(color) {
+        if (color){
+            selectedTds.forEach((td) => {
+                td.style.backgroundColor = color;
+                if (!editCells.includes(td)) {
+                    editCells.push(td);
+                }
+            });
+        }else{
+            selectedTds.forEach((td) => {
+                td.classList.toggle("selected");
+            });
+        }
+    
       
         selectedTds = [];
       
@@ -569,7 +746,6 @@ function onCreateCell(lecture_room_id){
                         "time":indexTime[index],
                         "year":yearList[yy]
                     }
-                    console.log(data);
                     
                 data_group.push(data);
                 }
@@ -579,6 +755,7 @@ function onCreateCell(lecture_room_id){
     onDataLectureRoomGet();
     postData(data_group);
 }
+
 
 async function postData(dataList) {
     const apiUrl = '/api/schedule/';

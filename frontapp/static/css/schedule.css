@@ -498,6 +498,8 @@ div.modal.hidden{
 }
 
 #border_modal i{
+    position: relative;
+    z-index: 1000;
     font-size : 25px;
 }
 

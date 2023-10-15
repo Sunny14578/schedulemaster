@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+import datetime
+
+
+year = datetime.datetime.now().year
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password, name, phone_number, role, company_id, **kwargs):
@@ -50,7 +54,7 @@ class LectureRoom(models.Model):
     company_id = models.ForeignKey(Company, on_delete=models.CASCADE) # 기업 ID ( 외래 키 )
 
     def __str__(self):
-        return self.room_name
+        return str(self.room_id)
 
 # 스케줄(Schedule) 모델 정의
 class Schedule(models.Model):
@@ -86,7 +90,7 @@ class ScheduleCell(models.Model):
     colspan_en = models.IntegerField(default=1)
     rowspan_en = models.IntegerField(default=1)
     
-    
+    year = models.IntegerField(default=year)
     day = models.IntegerField() # 일, 월, 시간
     month = models.IntegerField()
     time = models.TimeField()
