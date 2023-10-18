@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf import settings
 from django.urls import path, include
-import debug_toolbar
+# import debug_toolbar
 
 
 urlpatterns = [
@@ -23,7 +23,7 @@ urlpatterns = [
     path('api/', include('apiapp.urls')),
 ]
 
-if settings.DEBUG:
-    urlpatterns += [
-        path('__debug__/', include(debug_toolbar.urls)),
-    ]
+# if settings.DEBUG:
+#     urlpatterns += [
+#         path('__debug__/', include(debug_toolbar.urls)),
+#     ]

@@ -37,14 +37,14 @@ def get_secret(KEY, secrets=secrets):
 SECRET_KEY = get_secret("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-DEBUG_TOOLBAR_CONFIG = {
-    # ...
-    'SHOW_TOOLBAR_CALLBACK': lambda request: True,
-}
+DEBUG = False
+# DEBUG_TOOLBAR_CONFIG = {
+#     # ...
+#     'SHOW_TOOLBAR_CALLBACK': lambda request: True,
+# }
 
-def custom_show_toolbar(request):
-    return True
+# def custom_show_toolbar(request):
+#     return True
 
 ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'apiapp.User'
