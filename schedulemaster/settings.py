@@ -16,7 +16,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-print(BASE_DIR)
+
 secret_file = os.path.join(BASE_DIR, 'secret.json')
 
 with open(secret_file, 'r') as f:
@@ -76,22 +76,22 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'schedulemaster.urls'
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "level": "DEBUG",
-            "class": "logging.StreamHandler",
-        },
-    },
-    "loggers": {
-        "django.db.backends": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-        },
-    },
-}
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "handlers": {
+#         "console": {
+#             "level": "DEBUG",
+#             "class": "logging.StreamHandler",
+#         },
+#     },
+#     "loggers": {
+#         "django.db.backends": {
+#             "handlers": ["console"],
+#             "level": "DEBUG",
+#         },
+#     },
+# }
 
 
 
@@ -164,7 +164,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-INTERNAL_IPS = ('127.0.0.1')
+# INTERNAL_IPS = ('127.0.0.1')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
