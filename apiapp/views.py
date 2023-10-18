@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from .serializers import *
 from rest_framework.views import APIView
-from .models import User, LectureRoom, ScheduleCell
+from .models import User, LectureRoom, ScheduleCell, Schedule
 import jwt
 from django.contrib.auth import authenticate
 from pathlib import Path
@@ -98,9 +98,11 @@ class AuthAPIView(APIView):
     # 로그인
     def post(self, request):
     	# 유저 인증
+        print(request.data.get("email"), request.data.get("password"), "ㄴㅇㄹㄴㅇㄹㅇㄴ")
         user = authenticate(
             email=request.data.get("email"), password=request.data.get("password")
         )
+        print(user, "확인해보자")
         # 이미 회원가입 된 유저일 때
         if user is not None:
             serializer = UserSerializer(user)
@@ -211,17 +213,48 @@ class ScheduleAPIView(APIView):
             return Response({"message": 1}, status=status.HTTP_201_CREATED)
             
     
-    def put(self, request, pk):
-        try:
-            schedule_cell = ScheduleCell.objects.get(pk=pk)
-        except ScheduleCell.DoesNotExist:
-            return Response({"error": "ScheduleCell does not exist"}, status=404)
+    def put(self, request):
+        data = request.data  
+        pks_to_update = [item["pk"] for item in data]
+        schedule_cells_to_update = ScheduleCell.objects.filter(pk__in=pks_to_update)
+        user_data = User.objects.values('color', 'id')
+        
+        user_index = []
+        schedules_to_create = []
+        # 각 레코드에 대한 필드 업데이트
+        
+        for item, cell in zip(data, schedule_cells_to_update):
+            cell.cell_content = item["cell_content"]
+            cell.border = item["border"]
+            cell.background_color = item["background_color"]
+            matching_ids = [i['id'] for i in user_data if i['color'] == rgb_to_hex(item["background_color"])]
 
-        serializer = ScheduleSerializer(schedule_cell, data=request.POST)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
+            if matching_ids:
+                schedule = Schedule(
+                user_id_id=matching_ids[0],  # 사용자 ID를 할당합니다
+                room_id=cell.lecture_room_id,
+                year=cell.year,
+                day=cell.day,
+                month=cell.month,
+                time=cell.time
+                )   
+
+                schedules_to_create.append(schedule)
+            
+        
+            cell.save()
+
+        
+        try:
+            with transaction.atomic():
+                Schedule.objects.bulk_create(schedules_to_create)
+        except Exception as e:
+            error_message = str(e)
+            return Response({"message": 0, "error":error_message}, status=status.HTTP_200_OK)
+
+        ScheduleCell.objects.bulk_update(schedule_cells_to_update, ["cell_content", "border", "background_color"])
+
+        return Response({"message": 1}, status=status.HTTP_200_OK)
 
     def delete(self, request, pk):
         try:
@@ -231,3 +264,15 @@ class ScheduleAPIView(APIView):
         except ScheduleCell.DoesNotExist:
             return Response({"error": "ScheduleCell does not exist"}, status=404)
 
+
+def rgb_to_hex(rgb):
+    # RGB 값을 공백을 기준으로 나누어 리스트로 만듭니다.
+    rgb = rgb[4:-1].split(', ')
+    
+    # RGB 값은 문자열로 되어 있으므로 정수로 변환합니다.
+    r, g, b = [int(channel) for channel in rgb]
+    
+    # RGB 값을 HEX 형식으로 변환합니다.
+    hex_color = "#{:02X}{:02X}{:02X}".format(r, g, b)
+    
+    return hex_color

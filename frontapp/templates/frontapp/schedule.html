@@ -163,6 +163,55 @@
         </div>
     </div>
 
+    <div class = "background_modal hidden" id = "backgroundcolor_modal">
+        <div class = "backgroundcolor_modal-menu">
+            <div class = "palette-first">
+                <div class = "palette basic">
+                    <div style="background-color: rgb(0, 0, 0);"></div><div style="background-color: rgb(67, 67, 67);"></div><div style="background-color: rgb(102, 102, 102);"></div><div style="background-color: rgb(153, 153, 153);"></div><div style="background-color: rgb(183, 183, 183);"></div><div style="background-color: rgb(204, 204, 204);"></div><div style="background-color: rgb(217, 217, 217);"></div><div style="background-color: rgb(239, 239, 239);"></div><div style="background-color: rgb(243, 243, 243); border: 1px #DDD solid;"></div><div style="background-color: rgb(255, 255, 255); border: 1px #DDD solid;"></div>
+                    <div style="background-color: rgb(152, 0, 0);"></div><div style="background-color: rgb(255, 0, 0);"></div><div style="background-color: rgb(255, 153, 0);"></div><div style="background-color: rgb(255, 255, 0);"></div><div style="background-color: rgb(0, 255, 0);"></div><div style="background-color: rgb(0, 255, 255);"></div><div style="background-color: rgb(74, 134, 232);"></div><div style="background-color: rgb(0, 0, 255);"></div><div style="background-color: rgb(153, 0, 255);"></div><div style="background-color: rgb(255, 0, 255);"></div>
+                    <!-- <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div> -->
+                </div>
+            </div>
+            <div class = "palette-second pl">
+                <div class = "palette-text">색 추가</div>
+                <div class = "palette recent-color">
+                    
+                </div>
+            </div>
+            <div class = "palette-third pl">
+                <div class = "palette-text">강사색깔</div>
+                <div class = "palette teacher-color">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+   
+
+    <div class="errormodal hidden" id = "error">
+        <div>
+            <i class='bx bx-error' ></i>
+        </div>
+        <div>
+            <i class='bx bx-x-circle exit error'></i>
+            <h1> WARNING !!</h1>
+            <h5 id = "error_message"></h5>
+            <h5>중복되었습니다.</h5>
+        </div>
+    </div>
+
+    <div class="modal hidden" id = "teacher-hover">
+        <div class = "teacher-text">
+          
+        </div>
+    </div>
+
+
+    <div class="memo hidden" id = "memo">
+        <textarea id="memo-text" rows="3" cols="20">
+            
+        </textarea>
+    </div>
 
 
     <script src="{% static 'js/schedule.js' %}"></script>

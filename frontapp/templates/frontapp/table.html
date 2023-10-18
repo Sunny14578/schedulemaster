@@ -4,17 +4,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type = "text/css" href="{% static 'css/table.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type = "text/css" href="{% static 'css/schedule.css' %}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
     <title>Document</title>
 </head>
 <body>
-    <script src="{% static 'js/table.js' %}"></script>
-    <div class="modal hidden" id = "border_modal">
-        <div>
-            <i class='bx bx-border-none' ></i>
-            <i class='bx bx-border-all' ></i>
+    <div class = "background_modal hidden" id = "backgroundcolor_modal">
+        <div class = "backgroundcolor_modal-menu">
+            <div class = "palette-first">
+                <div class = "palette basic">
+                    <div style="background-color: rgb(0, 0, 0);"></div><div style="background-color: rgb(67, 67, 67);"></div><div style="background-color: rgb(102, 102, 102);"></div><div style="background-color: rgb(153, 153, 153);"></div><div style="background-color: rgb(183, 183, 183);"></div><div style="background-color: rgb(204, 204, 204);"></div><div style="background-color: rgb(217, 217, 217);"></div><div style="background-color: rgb(239, 239, 239);"></div><div style="background-color: rgb(243, 243, 243); border: 1px #DDD solid;"></div><div style="background-color: rgb(255, 255, 255); border: 1px #DDD solid;"></div>
+                    <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                    <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+                </div>
+            </div>
+            <div class = "palette-second pl">
+                <div>최근 사용한 색</div>
+                <div class = "palette teacher-color">
+                    
+                </div>
+            </div>
+            <div class = "palette-third pl">
+                <div>강사색깔</div>
+                <div class = "palette teacher-color">
+                    
+                </div>
+            </div>
         </div>
     </div>
-
+    <script src="{% static 'js/schedule.js' %}"></script>
 </body>
 </html>

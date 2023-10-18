@@ -1,6 +1,7 @@
 var indexTime = ["08:00:00","09:00:00","10:00:00","11:00:00","12:00:00","13:00:00","14:00:00","15:00:00","16:00:00","17:00:00"];
 var bgcolor = ["#5F00FF", "#003399", "#FF5E00", "#22741C", "#F15F5F", "#D941C5", "#5D5D5D", "#664B00", "#5F00FF", "#003399", "#FF5E00", "#22741C"];
 var monthList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
 const modifiedTdIds = [];
 const body = document.querySelector("body"),
     sidebar = body.querySelector(".sidebar"),
@@ -10,6 +11,9 @@ const body = document.querySelector("body"),
     teacher_add_btn = body.querySelector(".bx.bx-user-plus.toggle"),
     modal = body.querySelector(".modal"),
     exit = body.querySelector(".exit"),
+    error_popup = body.querySelector(".errormodal"),
+    error_exit = body.querySelector(".bx.bx-x-circle.exit.error"),
+    error_message = body.querySelector("#error_message"),
     sidebar_nav_a = body.querySelectorAll(".sidebar .nav.a.close"),
     sidebar22 = body.querySelectorAll(".sidebar2"),
     sidebar22_icon = body.querySelectorAll(".nav_link > a > i"), 
@@ -18,14 +22,23 @@ const body = document.querySelector("body"),
     lecture_add_btn = body.querySelector(".bx.bx-user-plus.toggle.room"),
     lecture_exit = body.querySelector(".exit.room"),
     lecture_room_menu = body.querySelector("#sidebar_room .menu-links"),
-
     teacher_menu = body.querySelector("#sidebar_teacher .menu-links"),
     table_lecture_room = body.querySelector(".lecture_room"),
     table = body.querySelector(".cell-table"),
     main_body = body.querySelector(".home.table-menu"),
-    table_tools = body.querySelectorAll(".border-menu i");
+    table_tools = body.querySelectorAll(".border-menu i"),
+    background_modal = body.querySelector(".background_modal"),
+    background_icon = body.querySelector(".bx.bxs-color-fill.icon"),
+    memo_icon = body.querySelector(".bx.bx-memory-card.icon");
     
     editCells = []
+
+    // base js
+    document.body.addEventListener("contextmenu", (event) => {
+        event.preventDefault(); // 기본 컨텍스트 메뉴를 표시하지 않음
+        onDataTeacherGet();
+    });
+    
 
     // tools
     let preTool = null
@@ -51,6 +64,7 @@ const body = document.querySelector("body"),
 
                     rowIndexList.push(rowIndex);
                     cellIndexList.push(cellIndex);
+                    editCells.push(td);
                 })
 
                 const rowMax = Math.max(...rowIndexList);
@@ -90,9 +104,134 @@ const body = document.querySelector("body"),
     document.addEventListener("keydown", (event) => {
         if (event.ctrlKey && event.key === "s") {
             event.preventDefault(); // 기본 저장 동작을 막음 (브라우저에서의 저장)
-            console.log("저장~!");
+            onUpdateCell();
         }
     });
+
+
+    document.body.addEventListener("click", function(event) {
+        const clickedElement = event.target; // 클릭된 요소
+    
+        // 클릭된 요소가 메모 태그 또는 메모 태그 내부의 요소인 경우 이벤트 무시
+        if (clickedElement === memo_icon ) {
+            memo_check = 2;
+        }else if (memo_check == 2){
+            textareaTag.classList.toggle("hidden");
+            pre_memo.style.border = "1px solid rgb(221, 221, 221)"
+            memo_check = 0;
+        }
+
+
+    });
+
+    palette_color = body.querySelectorAll(".palette div");
+    recent_color_tag = body.querySelector(".recent-color");
+    teacher_color_tag = body.querySelector(".teacher-color");
+    teacher_hover_tag = body.querySelector("#teacher-hover");
+    teacher_text_tag = body.querySelector(".teacher-text");
+
+    // background icon
+    background_icon.addEventListener("click", (event) =>{
+        const iconRect = background_icon.getBoundingClientRect();
+        const teacherInfo = localStorage.getItem("teacherInfo");
+        const teacherInfoList = JSON.parse(teacherInfo);
+        
+        // 모달 창의 위치 계산
+        const left = iconRect.right + window.scrollX -130; // 클릭한 요소의 오른쪽
+        const bottom = iconRect.bottom + window.scrollY; // 클릭한 요소의 위
+
+        // 모달 창의 위치 설정
+        background_modal.style.left = left + "px";
+        background_modal.style.top = bottom + "px";
+
+        teacher_color_tag.innerHTML = "";
+
+        teacherInfoList.forEach((teacher) => {
+            const newDiv = document.createElement("div");
+           
+            newDiv.style.backgroundColor = teacher.color;
+            newDiv.addEventListener("click", () => {
+                handleColorDivClick(newDiv);
+            });
+
+            let hoverTimer;
+
+            newDiv.addEventListener("mouseenter", () => {
+                hoverTimer = setTimeout(() => {
+                    // 1초 이상 호버되었을 때 스타일 변경 및 추가 작업 수행
+                    teacher_text_tag.textContent = teacher.name;
+
+                    const iconRect = newDiv.getBoundingClientRect();
+                    const left = iconRect.right + window.scrollX+20; // 클릭한 요소의 오른쪽
+                    const bottom = iconRect.bottom + window.scrollY; // 클릭한 요소의 위
+
+                    // 모달 창의 위치 설정
+                    teacher_hover_tag.style.left = left + "px";
+                    teacher_hover_tag.style.top = bottom + "px";
+                    teacher_hover_tag.classList.toggle("hidden");
+                }, 1000); // 1초 (1000 밀리초) 지연
+            });
+        
+            newDiv.addEventListener("mouseleave", () => {
+                clearTimeout(hoverTimer);
+                if (!teacher_hover_tag.classList.contains("hidden")) {
+                    teacher_hover_tag.classList.toggle("hidden");
+                }
+            });
+        
+            teacher_color_tag.appendChild(newDiv);
+        });
+
+        background_modal.classList.toggle("hidden");
+    })
+
+    let selectedTdsColor = [];
+    
+    palette_color.forEach((colorDiv) => {
+        colorDiv.addEventListener("click", (event) => {
+            handleColorDivClick(colorDiv);
+        });
+    });
+    let localColors = [];
+
+    function handleColorDivClick(colorDiv) {
+        const backgroundColor = window.getComputedStyle(colorDiv).backgroundColor;
+        background_modal.classList.toggle("hidden");
+    
+        if (selectedTdsColor) {
+            selectedTdsColor.forEach((cell) => {
+                cell.style.backgroundColor = backgroundColor;
+                editCells.push(cell);
+            });
+            
+            selectedTdsColor = [];
+        }
+    }
+
+    // background icon end
+
+    // memo icon
+    textareaTag = body.querySelector("#memo");
+    let memo_check = 0
+    let pre_memo;
+
+    memo_icon.addEventListener("click", async() => {
+        const iconRect = memo_list.getBoundingClientRect();
+        const left = iconRect.right + window.scrollX+1; // 클릭한 요소의 오른쪽
+        const bottom = iconRect.bottom + window.scrollY-18; // 클릭한 요소의 위
+        memo_list.style.border = "2px solid rgb(0, 0, 0)";
+        pre_memo = memo_list;
+        // 모달 창의 위치 설정
+        textareaTag.style.left = left + "px";
+        textareaTag.style.top = bottom + "px";
+        textareaTag.classList.toggle("hidden");
+        memo_check = 1
+    })
+    
+
+    
+
+    // memo icon end
 
     // tools end
 
@@ -109,10 +248,6 @@ const body = document.querySelector("body"),
     borderAdd_icon.addEventListener("click", async() =>{
         const iconRect = borderAdd_icon.getBoundingClientRect();
     
-        // 모달 창의 너비와 높이를 가져오기
-        const modalWidth = border_modal.offsetWidth;
-        const modalHeight = border_modal.offsetHeight;
-
         // 모달 창의 위치 계산
         const left = iconRect.right + window.scrollX; // 클릭한 요소의 오른쪽
         const bottom = iconRect.bottom + window.scrollY + 30; // 클릭한 요소의 위
@@ -129,25 +264,28 @@ const body = document.querySelector("body"),
     // teacher color add //
     let teacher_check = false
     let teacher_color = null
+    let canvas;
 
     teacher_menu.addEventListener("click", function(evnet){
         teacher_check = true
         const clickedElement = event.target;
-        if (clickedElement.tagName === "A"){
+        if (clickedElement.tagName === "A" && teacher_check){
             const inputColor = clickedElement.querySelector("input[type='color']")
             
-
             if (inputColor) {
                 const colorValue = inputColor.value;
                 teacher_color = colorValue;
-                drawColorAtMousePosition(colorValue, event.clientX, event.clientY);
+                drawColorAtMousePosition(teacher_color, event.clientX, event.clientY);
             }
         }
     })
 
     function drawColorAtMousePosition(color, x, y) {
-        const canvas = document.createElement("canvas");
+        if (canvas && canvas.parentNode) {
+            canvas.parentNode.removeChild(canvas);
+        }
 
+        canvas = document.createElement("canvas");
         canvas.width = 10; // 점의 너비
         canvas.height = 10; // 점의 높이
         const context = canvas.getContext("2d");
@@ -162,32 +300,44 @@ const body = document.querySelector("body"),
         canvas.style.top = y + "px";
     
         document.body.appendChild(canvas);
-          // 마우스 이동 이벤트를 감지하여 canvas 위치 업데이트
 
-        document.addEventListener("mousedown", (event) => {
-            const clickedElement = event.target
-            if (clickedElement.tagName == "TD" && color){
-                clickedElement.style.backgroundColor = color;
+        document.addEventListener("mousedown", teacherAddMouseDown);
+        document.addEventListener("mousemove", teacherAddMouseMove);
 
-                editCells.push(clickedElement)
-                console.log(editCells);
+        document.addEventListener("contextmenu", (event) => {
+            if (teacher_check){
+                event.preventDefault(); // 기본 컨텍스트 메뉴를 표시하지 않음
+                teacher_color = null
+                teacher_check = null
+
+                if (canvas.parentNode) {
+                    canvas.parentNode.removeChild(canvas); // Canvas 제거
+                }
             }
-        })
+          });
+    }
 
-        document.addEventListener("mousemove", (event) => {
+    function teacherAddMouseDown(event){
+        const clickedElement = event.target
+        if (clickedElement.tagName == "TD" && teacher_check && event.button === 0){
+            clickedElement.style.backgroundColor = teacher_color;
+
+            if (!editCells.includes(clickedElement)) {
+                editCells.push(clickedElement);
+            }
+            console.log(editCells);
+        }
+    }
+
+    function teacherAddMouseMove(event){
+        if (teacher_check){
             x = (event.clientX-5) - canvas.width / 2; // 마우스 X 좌표
             y = (event.clientY-5) - canvas.height / 2; // 마우스 Y 좌표
 
             // canvas 위치 업데이트
             canvas.style.left = x + "px";
             canvas.style.top = y + "px";
-        });
-
-        document.addEventListener("contextmenu", (event) => {
-            event.preventDefault(); // 기본 컨텍스트 메뉴를 표시하지 않음
-            teacher_color = null
-            document.body.removeChild(canvas); // canvas 제거
-          });
+        }
     }
 
    
@@ -207,10 +357,11 @@ const body = document.querySelector("body"),
       
     let selectedTd = null;
     let preBorderStyle = null;
+    let memo_list;
 
     table.addEventListener("click", function(event) {
-        
         const clickedElement = event.target;
+        memo_list = clickedElement;
         // 클릭한 요소가 td 요소인 경우만 처리
         if (clickedElement.tagName === "TD" && !teacher_color) {
             preBorderStyle = getBorderStyles(clickedElement);
@@ -231,6 +382,10 @@ const body = document.querySelector("body"),
         // td 요소에서 키 입력 이벤트 처리
         clickedElement.addEventListener("keydown", function(event) {
             // 엔터 키를 누르면 편집 모드를 끝내고 값을 적용
+            if (!editCells.includes(clickedElement)) {
+                editCells.push(clickedElement);
+            }
+
             if (event.key === "Enter"){
                 event.preventDefault(); // 엔터 키의 기본 동작 방지
                 clickedElement.contentEditable = false; // 편집 모드 종료
@@ -240,6 +395,7 @@ const body = document.querySelector("body"),
     
             clickedElement.style.border = "2px solid #695CFE";
             selectedTd = clickedElement;
+            selectedTdsColor.push(selectedTd);
 
             if (selectedTd){
                 selectedTd.style.borderTop = preBorderStyle.borderTop;
@@ -265,6 +421,7 @@ const body = document.querySelector("body"),
 
         mouseDownTimer = setTimeout(function() {
             if (clickedElement.tagName == "TD" && !teacher_color){
+                console.log("이거");
                 idsMouseDown = true;
                 startTd = clickedElement;
                 endTd = clickedElement;
@@ -303,9 +460,10 @@ const body = document.querySelector("body"),
             if(selectedTds[0] != event.target){
                 const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
                 endRowIndex = clickedElement.parentElement.rowIndex;
-                endColIndex = tdIndex;
+                endColIndex = tdIndex;  
+                console.log(111);
 
-                selectTds(teacher_color);
+                selectTds();
             }
         }
     });
@@ -315,10 +473,11 @@ const body = document.querySelector("body"),
         idsMouseDown = false;
     });
 
-    function selectTds(color) {
-        if (color){
+    function selectTds() {
+        selectedTdsColor = selectedTds;
+        if (teacher_color){
             selectedTds.forEach((td) => {
-                td.style.backgroundColor = color;
+                td.style.backgroundColor = teacher_color;
                 if (!editCells.includes(td)) {
                     editCells.push(td);
                 }
@@ -367,6 +526,10 @@ const body = document.querySelector("body"),
 
     lecture_exit.addEventListener("click", () => {
         lecture_modal.classList.toggle("hidden");
+    })
+
+    error_exit.addEventListener("click", () => {
+        error_popup.classList.toggle("hidden");
     })
 
 
@@ -481,7 +644,6 @@ function onDataPost() {
         // console.log('서버 응답 데이터:', data);
         // 로그인 성공 또는 실패 여부를 처리
         if (data.message) {
-            console.log('회원가입 성공');
             emInput.value = "";
             nameInput.value = "";
             pwInput.value = "";
@@ -622,6 +784,9 @@ function onDataTeacherGet(){
         const teacherNames = data.map(item => item.name);
         const colors = data.map(item => item.color)
 
+        const teacherInfo = data.map(item => ({ id: item.id, name: item.name, color: item.color}));
+        localStorage.setItem('teacherInfo', JSON.stringify(teacherInfo));
+
         for (var i=0; i<teacherNames.length; i++){
             var new_litag = document.createElement("li");
             new_litag.className = "nav_link teacher";
@@ -719,24 +884,40 @@ function onDataLectureRoomGet(){
 }
 
 function onCreateCell(lecture_room_id){
-
+    var currentDate = new Date();
     var monthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     
     data_group = [] // post 요청을 줄이기위해 데이터 그룹화
    
-    const maxMonthList = localStorage.getItem("maxMonthList");
-    const minMonthList = localStorage.getItem("minMonthList");
-    const yearListString = localStorage.getItem("yearList");
-    const yearList = JSON.parse(yearListString);
+    let maxMonthList = localStorage.getItem("maxMonthList");
+    let minMonthList = localStorage.getItem("minMonthList");
+    let yearListString = localStorage.getItem("yearList");
+    let yearList = JSON.parse(yearListString);
 
-    const yearMaxMonthList = maxMonthList.split(",").slice(0,yearList.length);
-    const yearminMonthList = minMonthList.split(",").slice(0,yearList.length);
+    let yearMaxMonthList = maxMonthList.split(",").slice(0,yearList.length);
+    let yearminMonthList = minMonthList.split(",").slice(0,yearList.length);
+    let check = 2
+
+    if (!maxMonthList){
+        var year = currentDate.getFullYear();
+        yearList = [year]
+        check = 1
+    }
 
     for (let yy = 0; yy < yearList.length; yy++){
         if (isLeapYear((yearList[yy]))){
             monthsDays[1] = 29
         }
-        for (let month = parseInt(yearminMonthList[yy]); month < parseInt(yearMaxMonthList[yy])+1; month++){
+
+        let mmin = parseInt(yearminMonthList[yy])
+        let mmax = parseInt(yearMaxMonthList[yy])
+
+        if (check === 1){
+            mmin = currentDate.getMonth() + 1;
+            mmax = currentDate.getMonth() + 1;
+        }
+        
+        for (let month = mmin; month < mmax+1; month++){
             for (let index = 0; index < indexTime.length; index++){
                 for (let day = 1; day <= monthsDays[month-1]; day++){
                     data = {
@@ -746,7 +927,6 @@ function onCreateCell(lecture_room_id){
                         "time":indexTime[index],
                         "year":yearList[yy]
                     }
-                    
                 data_group.push(data);
                 }
             }
@@ -785,23 +965,23 @@ async function postData(dataList) {
 
 // 달 추가
 function plusMonthCreateCell(){
+    
     let maxMonth = parseInt(localStorage.getItem('maxMonth'));
     const yearListString = localStorage.getItem("yearList");
     let yearList = JSON.parse(yearListString);
     
+  
     if (maxMonth==12){
         yearList.push(yearList[yearList.length-1]+1);
         maxMonth=0;
     }
-    
+   
     const lastYear = (yearList[yearList.length-1]);
 
     var monthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
     const rooms = localStorage.getItem('roomIdNames');
     const splitRooms = rooms.split(',');
-    console.log(splitRooms);
-    console.log(typeof splitRooms[0]);
 
     data_group = []
 
@@ -809,7 +989,6 @@ function plusMonthCreateCell(){
         monthsDays[1] = 29
     }
 
-    console.log(maxMonth, "월");
     for (let room_id = 0; room_id < splitRooms.length; room_id++){
         for (let month = maxMonth; month < maxMonth+2; month++){
             for (let index = 0; index < indexTime.length; index++){
@@ -933,8 +1112,22 @@ function onDataCellGet(){
                             
                             for (let j = 0; j < monthsDays[monthIndex-1]; j++){
                                 const td = document.createElement('td');
+
+                                const year = FilteMonthData[j].year;
+                                const month = FilteMonthData[j].month;
+                                const day = FilteMonthData[j].day;
+                                const weekendCheck = isWeekend(year, month, day);
+
+                                let back_color = "white"
+        
+                                if (weekendCheck == 6){
+                                    back_color = "rgb(0, 176, 240)"
+                                }else if (weekendCheck == 0){
+                                    back_color = "rgb(255, 0, 0)"
+                                }
+
                                 td.textContent = FilteMonthData[j].day;
-                                td.style.backgroundColor = bgcolor[monthIndex-1];
+                                td.style.backgroundColor = back_color;
                                 theadRowFragment.appendChild(td);
                             }
                         }
@@ -973,7 +1166,22 @@ function onDataCellGet(){
                     for (let j = 0; j < cols; j++){
                         const td = document.createElement('td');
                         td.setAttribute('id', FilterRowData[j].schedule_cell+"td");
-
+                        const cellContent = FilterRowData[j].cell_content;
+                        const border = FilterRowData[j].border;
+                        const boder_list = border.split(';');
+                     
+                        let backgroundColor = FilterRowData[j].background_color;
+                      
+                        td.textContent = cellContent;
+                        td.style.borderTop = boder_list[0];
+                        td.style.borderRight = boder_list[1];
+                        td.style.borderBottom = boder_list[2];
+                        td.style.borderLeft = boder_list[3];
+                        
+                        if (backgroundColor != 'white'){
+                            td.style.backgroundColor = backgroundColor;
+                        }
+                    
                         rowfragment.appendChild(td);
                     }
                     tr.appendChild(rowfragment);
@@ -992,7 +1200,100 @@ function onDataCellGet(){
         }
     });
 }
+// 주말체크
+function isWeekend(year, month, day) {
+    // js에서 월은 0부터 시작
+    const date = new Date(year, month - 1, day);
+    const dayOfWeek = date.getDay(); // 0 (일요일)부터 6 (토요일)까지의 값을 반환
+    let result = null
+    if (dayOfWeek == 0){
+        result = 0
+    }else if (dayOfWeek == 6){
+        result = 6
+    }
+
+    return result; // 0 또는 6인 경우에 주말
+}
    
-  
+// update cells
+function onUpdateCell(){
+    const data_group = []
+
+    editCells.forEach((td) => {
+        const computedStyle = window.getComputedStyle(td);
+
+        let combinedBorder = null
+        const borderValue = computedStyle.border;
+        
+        const borderTop = computedStyle.borderTop;
+        const borderBottom = computedStyle.borderBottom;
+        const borderRight = computedStyle.borderRight;
+        const borderLeft = computedStyle.borderLeft;
+
+        combinedBorder = `${borderTop};${borderRight};${borderBottom};${borderLeft}`;
+        console.log(combinedBorder, "sdfsdfsd");
+
+        // if (!borderValue){
+        
+        // }else{
+        //     combinedBorder = borderValue
+            
+        // }
+        const pk = td.id;
+        const textContent = td.textContent;
+        const backgroundColor = computedStyle.backgroundColor;
+        const modiPk = pk.replace("td", "");
+       
+        data = {
+            "pk":modiPk,
+            "cell_content":textContent,
+            "border":combinedBorder,
+            "background_color":backgroundColor
+        }
+        data_group.push(data);
+    });
+    console.log(data_group);
+    postUpdateData(data_group);
+}
+
+async function postUpdateData(dataList) {
+    const apiUrl = '/api/schedule/';
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataList), 
+        });
+
+        console.log(response.message);
+
+        if (response.ok) {
+            const responseData = await response.json();
+            
+            if (responseData.message == 0){
+                const regex = /Duplicate entry '([^']*)-([0-9]+)'/;
+                const matches = responseData.error.match(regex);
+                const dates = matches[1].split("-");
+                const datesmessage = dates[0]+"년 "+dates[2]+"월 "+dates[1]+"일 "+dates[3].split(":")[0]+"시";
+
+                const info = localStorage.getItem("teacherInfo");
+                const teacherInfo = JSON.parse(info);
+                const matchingTeacher = teacherInfo.find(teacher => teacher.id == matches[2]);
+         
+                error_message.innerHTML = matchingTeacher['name'] + "님의 " + datesmessage
+                error_popup.classList.toggle("hidden");
+            }else{
+                editCells = []
+            }
+        } else {
+            console.error('데이터 전송 실패:', response.status, response.statusText);
+        }
+    } catch (error) {
+       
+    }
+}
         
  
