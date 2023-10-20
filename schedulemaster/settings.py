@@ -16,7 +16,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+print(BASE_DIR)
 secret_file = os.path.join(BASE_DIR, 'secret.json')
 
 with open(secret_file, 'r') as f:
@@ -37,7 +37,7 @@ def get_secret(KEY, secrets=secrets):
 SECRET_KEY = get_secret("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 # DEBUG_TOOLBAR_CONFIG = {
 #     # ...
 #     'SHOW_TOOLBAR_CALLBACK': lambda request: True,
@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apiapp',
     'frontapp',
-    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -71,7 +70,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'schedulemaster.urls'
@@ -102,7 +100,6 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -121,6 +118,7 @@ NAME = get_secret("NAME")
 PORT = get_secret("PORT")
 USER = get_secret("USER")
 PASSWORD = get_secret("PASSWORD")
+print(HOST, NAME, PORT, USER, PASSWORD)
 
 DATABASES = {
     'default': {
@@ -132,7 +130,6 @@ DATABASES = {
         'PASSWORD': PASSWORD,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -172,6 +169,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontapp/static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
