@@ -218,12 +218,13 @@ class ScheduleAPIView(APIView):
         try:
             data = request.data  
             pks_to_update = [item["pk"] for item in data]
+            
             schedule_cells_to_update = ScheduleCell.objects.filter(pk__in=pks_to_update)
             user_data = User.objects.values('color', 'id')
         
             for item, cell in zip(data, schedule_cells_to_update):
                 matching_ids = [i['id'] for i in user_data if i['color'] == rgb_to_hex(item["background_color"])]
-
+              
                 if matching_ids:
                     user = User.objects.get(id=matching_ids[0])
                     cell.user_id = user
@@ -233,7 +234,8 @@ class ScheduleAPIView(APIView):
                 cell.cell_content = item["cell_content"]
                 cell.border = item["border"]
                 cell.background_color = item["background_color"]
-                cell.save()
+
+               
 
             ScheduleCell.objects.bulk_update(schedule_cells_to_update, ["cell_content", "border", "background_color"])
             return Response({"message": 1}, status=status.HTTP_200_OK)
@@ -255,12 +257,17 @@ class ScheduleAPIView(APIView):
 
 def rgb_to_hex(rgb):
     # RGB 값을 공백을 기준으로 나누어 리스트로 만듭니다.
+  
     rgb = rgb[4:-1].split(', ')
-    
+ 
     # RGB 값은 문자열로 되어 있으므로 정수로 변환합니다.
-    r, g, b = [int(channel) for channel in rgb]
+    try:
+        r, g, b = [int(channel) for channel in rgb]
+        
+        # RGB 값을 HEX 형식으로 변환합니다.
+        hex_color = "#{:02X}{:02X}{:02X}".format(r, g, b)
+        return hex_color
+    except:
+        return None
     
-    # RGB 값을 HEX 형식으로 변환합니다.
-    hex_color = "#{:02X}{:02X}{:02X}".format(r, g, b)
     
-    return hex_color

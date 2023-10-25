@@ -554,6 +554,13 @@ const body = document.querySelector("body"),
             // 엔터 키를 누르면 편집 모드를 끝내고 값을 적용
             if (!editCells.includes(clickedElement)) {
                 editCells.push(clickedElement);
+                // if (event.ctrlKey && event.key == "s" || event.ctrlKey && event.key == "S") {
+                //     event.preventDefault();
+                //     console.log(12312312);
+                // }else{
+                    
+                //     console.log("들어가니?");
+                // }
             }
 
             if (event.key === "Enter" && event.shiftKey) {
@@ -591,6 +598,7 @@ const body = document.querySelector("body"),
     let mouseDownTimer;
 
     table.addEventListener("mousedown", (event) => {
+        selectedTdsColor = []
         deselectTds();
         console.log(selectedTds);
         const clickedElement = event.target
@@ -598,7 +606,6 @@ const body = document.querySelector("body"),
         event.preventDefault();
 
         if (clickedElement.tagName == "TD" && !teacher_color){
-           
             idsMouseDown = true;
             startTd = clickedElement;
             endTd = clickedElement;
@@ -1397,6 +1404,7 @@ function onUpdateCell(){
     const data_group = []
 
     editCells.forEach((td) => {
+        console.log(td);
         const computedStyle = window.getComputedStyle(td);
 
         let combinedBorder = null
@@ -1420,15 +1428,23 @@ function onUpdateCell(){
             "border":combinedBorder,
             "background_color":backgroundColor
         }
-        data_group.push(data);
+        if (data_group.length === 0 || data.pk > data_group[data_group.length - 1].pk) {
+            data_group.push(data);
+        } else {
+            // data_group 배열 내에서 적절한 위치를 찾아 삽입
+            for (let i = 0; i < data_group.length; i++) {
+                if (data.pk < data_group[i].pk) {
+                    data_group.splice(i, 0, data);
+                    break;
+                }
+            }
+        }
     });
-    console.log(data_group);
     postUpdateData(data_group);
 }
 
 async function postUpdateData(dataList) {
     const apiUrl = '/api/schedule/';
-
     try {
         const response = await fetch(apiUrl, {
             method: 'PUT',
@@ -1436,9 +1452,8 @@ async function postUpdateData(dataList) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(dataList), 
+            
         });
-
-        console.log(response.message);
 
         if (response.ok) {
             const responseData = await response.json();
@@ -1462,7 +1477,7 @@ async function postUpdateData(dataList) {
             console.error('데이터 전송 실패:', response.status, response.statusText);
         }
     } catch (error) {
-       
+       console.error("데이터 전송 중 오류:", error);
     }
 }
         

@@ -379,7 +379,7 @@ table{
 }
 
 table td:hover{
-    filter: brightness(80%);
+    box-shadow: 0 0 4px rgba(105, 92, 254, 1);
     cursor: default;
 }
 
@@ -448,8 +448,7 @@ table tbody td{
 }
 
 td.selected{
-    background-color: var(--body--color);
-    filter: brightness(80%);
+    box-shadow: 0 0 1.5px rgba(105, 92, 254, 1);
 }
 
 
