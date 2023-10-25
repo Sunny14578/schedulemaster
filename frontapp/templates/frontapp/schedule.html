@@ -1,6 +1,7 @@
 {% load static %}
 <head>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <link rel="stylesheet" type = "text/css" href="{% static 'css/schedule.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
@@ -91,13 +92,19 @@
 
     <section class="home table-menu">
         <div class="quick-menu">
-            <i class='bx bx-save icon'></i>
-            <i class='bx bx-border-all icon border'></i>
-            <i class='bx bx-chevron-down icon arrow'></i>
-            <i class='bx bx-merge icon'></i>
-            <i class='bx bxs-color-fill icon'></i>
-            <i class='bx bx-memory-card icon'></i>
-            <i class='bx bx-plus icon plus'></i>
+            <div>
+                <i class='bx bx-save icon'></i>
+            </div>
+            <div style="border-left: 1px solid lightgray;">
+                <i class='bx bx-border-all icon border' ></i>
+                <i class='bx bx-chevron-down icon arrow'></i>
+                <i class='merge icon'></i>
+                <i class='bx bxs-color-fill icon'></i>
+            </div>
+            <div style="border-left: 1px solid lightgray;">
+                <i class='bx bx-memory-card icon'></i>
+                <i class='bx bx-plus icon plus'></i>
+            </div>
         </div>
 
         <div class="main-schedule">
@@ -151,7 +158,7 @@
         </section>
     </div>
 
-    <div class="modal hidden" id = "border_modal">
+    <div class="modal tools hidden" id = "border_modal">
         <div class = "border-menu">
             <i class='bx bx-border-right icon' ></i>
             <i class='bx bx-border-left icon' ></i>
@@ -163,7 +170,7 @@
         </div>
     </div>
 
-    <div class = "background_modal hidden" id = "backgroundcolor_modal">
+    <div class = "background_modal tools hidden" id = "backgroundcolor_modal">
         <div class = "backgroundcolor_modal-menu">
             <div class = "palette-first">
                 <div class = "palette basic">
@@ -202,6 +209,12 @@
 
     <div class="modal hidden" id = "teacher-hover">
         <div class = "teacher-text">
+          
+        </div>
+    </div>
+
+    <div class="modal hidden" id = "quick-menu-hover">
+        <div class = "quick-text">
           
         </div>
     </div>

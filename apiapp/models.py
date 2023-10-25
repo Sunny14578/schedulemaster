@@ -37,7 +37,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 	# 헬퍼 클래스 사용
     objects = UserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'id'
+
+    def __str__(self):
+        return self.id
 
 # 기업(Company) 모델 정의
 class Company(models.Model):
@@ -57,25 +60,26 @@ class LectureRoom(models.Model):
         return str(self.room_id)
 
 # 스케줄(Schedule) 모델 정의
-class Schedule(models.Model):
-    schedule_id = models.AutoField(primary_key=True)  # 스케줄 고유 ID (자동 생성)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)  # 사용자 ID (외래 키, 스케줄을 소유한 사용자)
-    room_id = models.ForeignKey(LectureRoom, on_delete=models.CASCADE)  # 강의장 ID (외래 키, 스케줄이 배정된 강의장)
-    task_description = models.TextField(default="")  # 스케줄에 대한 설명 또는 작업 내용
-    year = models.IntegerField(default=year)
-    day = models.IntegerField() # 일, 월, 시간
-    month = models.IntegerField()
-    time = models.TimeField()
+# class Schedule(models.Model):
+#     schedule_id = models.AutoField(primary_key=True)  # 스케줄 고유 ID (자동 생성)
+#     user_id = models.ForeignKey(User, on_delete=models.CASCADE)  # 사용자 ID (외래 키, 스케줄을 소유한 사용자)
+#     room_id = models.ForeignKey(LectureRoom, on_delete=models.CASCADE)  # 강의장 ID (외래 키, 스케줄이 배정된 강의장)
+#     task_description = models.TextField(default="")  # 스케줄에 대한 설명 또는 작업 내용
+#     year = models.IntegerField(default=year)
+#     day = models.IntegerField() # 일, 월, 시간
+#     month = models.IntegerField()
+#     time = models.TimeField()
 
-    class Meta:
-        unique_together = ('year', 'day', 'month', 'time', 'user_id')
+#     class Meta:
+#         unique_together = ('year', 'day', 'month', 'time', 'user_id')
 
-    def __str__(self):
-        return f"Schedule {self.schedule_id} - {self.task_description}"
+#     def __str__(self):
+#         return f"Schedule {self.schedule_id} - {self.task_description}"
 
 # cell 모델 정의
 class ScheduleCell(models.Model):
     schedule_cell = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     lecture_room_id = models.ForeignKey(LectureRoom, on_delete=models.CASCADE) # 강의장 ID
     cell_content = models.TextField(default="") # 셀 내용
     border = models.CharField(default="1px solid #DDD", max_length=255) # 테두리 (예: 테두리 스타일, 두께 등)
@@ -91,3 +95,6 @@ class ScheduleCell(models.Model):
     time = models.TimeField()
     
     memo_content = models.TextField(blank=True, null=True) # 메모 내용
+
+    class Meta:
+        unique_together = ('year', 'day', 'month', 'time', 'user_id')

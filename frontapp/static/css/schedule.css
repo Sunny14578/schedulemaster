@@ -318,11 +318,20 @@ header .image-text .header-text{
     align-items: center;
 }
 
+.quick-menu > div{
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    height: 24px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+
 .quick-menu .icon{
-    width: 30px;
-    height: 30px;
-    font-size: 30px;
-    margin-right: 20px;
+    font-size: 25px;
+    margin-right: 5px;
+    margin-left: 5px;
 }
 
 .quick-menu .icon.border{
@@ -334,6 +343,8 @@ header .image-text .header-text{
     width: 20px;
     height: 20px;
     font-size: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
 .sidebar.close ~ .home{
@@ -368,7 +379,7 @@ table{
 }
 
 table td:hover{
-    background-color: var(--body--color);
+    filter: brightness(80%);
     cursor: default;
 }
 
@@ -438,6 +449,7 @@ table tbody td{
 
 td.selected{
     background-color: var(--body--color);
+    filter: brightness(80%);
 }
 
 
@@ -446,9 +458,36 @@ td.selected{
 }
 
 /* quick menu */
+
+
 .quick-menu i.icon:hover{
     cursor: pointer;
     background-color: var(--body--color);
+    color: black;
+}
+
+.quick-menu i.icon{
+    color: gray;
+}
+
+.merge{
+    width: 27px !important; 
+    height: 27px !important;
+    background-image: url("../imges/mergeicon22.png"); 
+    background-size: cover
+}
+
+.merge:hover{
+    background-image: url("../imges/mergeicon.png"); 
+    cursor: pointer;
+    background-color: var(--body--color);
+}
+
+#quick-menu-hover{
+    border-radius: 0px;
+    width: 80px;
+    height: 20px;
+    font-size: 10px;
 }
 
 /* modal */

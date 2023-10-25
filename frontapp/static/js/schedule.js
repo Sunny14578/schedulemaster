@@ -29,18 +29,219 @@ const body = document.querySelector("body"),
     table_tools = body.querySelectorAll(".border-menu i"),
     background_modal = body.querySelector(".background_modal"),
     background_icon = body.querySelector(".bx.bxs-color-fill.icon"),
+    quick_menu_icon = body.querySelectorAll(".quick-menu i");
     memo_icon = body.querySelector(".bx.bx-memory-card.icon");
     
-    editCells = []
+    const undoStack = [];
+    let editCells = [];
+    let preEditCells = [];
 
     // base js
     document.body.addEventListener("contextmenu", (event) => {
         event.preventDefault(); // 기본 컨텍스트 메뉴를 표시하지 않음
         onDataTeacherGet();
     });
+
+    // 실행취소
+    document.addEventListener("keydown", (event) => {
+        
+        if (event.ctrlKey && event.key == "z" || event.ctrlKey && event.key == "Z") {
+            console.log(123);
+            event.preventDefault();
+            const preState = undoStack.pop();
+            const postState = postEditCells.pop();
+            console.log(preState);
+
+            if (preState){
+                preState.forEach((cell, index) =>{
+                    cell.style.filter = 'none'
+                    postState[index].replaceWith(cell);
+                });
+            }
+        }
+    });
+
+
+    // 다른영역 클릭시 모달창 끄기
+    document.addEventListener("click", function(event) {
+        const clickedElement = event.target;
+        const tools = body.querySelectorAll(".tools");
+        
+        const isContained = Array.from(quick_menu_icon).some(icon => icon.contains(clickedElement));
+
+        if (!isContained) {
+            tools.forEach((tool, index) =>{
+                if (tool.classList.contains('hidden')) {
+                 
+                } else {
+                    tool.classList.toggle("hidden");
+                }
+            })
+        } 
+    });
     
 
     // tools
+
+    menuHover = body.querySelector("#quick-menu-hover");
+    menuText = body.querySelector(".quick-text");
+
+    // quick_menu hover
+    quick_menu_icon.forEach((icon, index) =>{
+        let iconHoverTimer;
+
+        const contents = ["저장 (Ctrl+S)", "테두리", "", "개발 예정", "채우기 색상", "메모", "달 추가(2개월)"]
+        const widths = ["80px", "50px", "", "50px", "60px", "40px", "90px"]
+
+        icon.addEventListener("mouseenter", () => {
+            iconHoverTimer = setTimeout(() => {
+                if (index != 2){
+                    menuText.textContent = contents[index];
+
+                    const iconRect = icon.getBoundingClientRect();
+                    const left = iconRect.right + window.scrollX-10; 
+                    const bottom = iconRect.bottom + window.scrollY+13; 
+                    menuHover.style.width = widths[index];
+
+                    menuHover.style.left = left + "px";
+                    menuHover.style.top = bottom + "px";
+                    menuHover.classList.remove("hidden");
+                }
+            }, 700); 
+        });
+        
+        icon.addEventListener("mouseleave", () => {
+            clearTimeout(iconHoverTimer);
+            menuHover.classList.add("hidden");
+        });
+
+        icon.addEventListener("click", function() {
+            switch (index) {
+                case 0:
+                    onUpdateCell();
+                    break;
+                case 3:
+                    // if (selectedTds.length > 1) {
+                        
+                    //     const firstCell = selectedTds[0];
+                    //     const lastCell = selectedTds[selectedTds.length - 1];
+            
+                    //     firstCell.colSpan = lastCell.cellIndex - firstCell.cellIndex + 1;
+                    //     firstCell.rowSpan = lastCell.parentElement.rowIndex - firstCell.parentElement.rowIndex + 1;
+            
+                    //     // 선택된 셀 클래스 초기화
+                    //     selectedTds.forEach(function(cell) {
+                    //         cell.classList.remove("selected");
+                    //     });
+
+                    //     editCells.push(selectedTds[0]);
+            
+                    //     // 선택된 셀 배열 초기화
+                    //     selectedTds = [];
+                    // }
+                    break;
+                case 4:
+                    const iconRect = background_icon.getBoundingClientRect();
+                    const teacherInfo = localStorage.getItem("teacherInfo");
+                    const teacherInfoList = JSON.parse(teacherInfo);
+                    
+                    // 모달 창의 위치 계산
+                    const left = iconRect.right + window.scrollX -130; // 클릭한 요소의 오른쪽
+                    const bottom = iconRect.bottom + window.scrollY; // 클릭한 요소의 위
+            
+                    // 모달 창의 위치 설정
+                    background_modal.style.left = left + "px";
+                    background_modal.style.top = bottom + "px";
+            
+                    teacher_color_tag.innerHTML = "";
+            
+                    teacherInfoList.forEach((teacher) => {
+                        const newDiv = document.createElement("div");
+                       
+                        newDiv.style.backgroundColor = teacher.color;
+                        newDiv.addEventListener("click", () => {
+                            handleColorDivClick(newDiv);
+                        });
+            
+                        let hoverTimer;
+            
+                        newDiv.addEventListener("mouseenter", () => {
+                            hoverTimer = setTimeout(() => {
+                                // 1초 이상 호버되었을 때 스타일 변경 및 추가 작업 수행
+                                teacher_text_tag.textContent = teacher.name;
+            
+                                const iconRect = newDiv.getBoundingClientRect();
+                                const left = iconRect.right + window.scrollX+20; // 클릭한 요소의 오른쪽
+                                const bottom = iconRect.bottom + window.scrollY; // 클릭한 요소의 위
+            
+                                // 모달 창의 위치 설정
+                                teacher_hover_tag.style.left = left + "px";
+                                teacher_hover_tag.style.top = bottom + "px";
+                                teacher_hover_tag.classList.toggle("hidden");
+                            }, 1000); // 1초 (1000 밀리초) 지연
+                        });
+                    
+                        newDiv.addEventListener("mouseleave", () => {
+                            clearTimeout(hoverTimer);
+                            if (!teacher_hover_tag.classList.contains("hidden")) {
+                                teacher_hover_tag.classList.toggle("hidden");
+                            }
+                        });
+                    
+                        teacher_color_tag.appendChild(newDiv);
+                    });
+            
+                    background_modal.classList.toggle("hidden");
+            }
+        });
+
+        
+    });
+
+    // background color
+    palette_color = body.querySelectorAll(".palette div");
+    recent_color_tag = body.querySelector(".recent-color");
+    teacher_color_tag = body.querySelector(".teacher-color");
+    teacher_hover_tag = body.querySelector("#teacher-hover");
+    teacher_text_tag = body.querySelector(".teacher-text");
+
+    let selectedTdsColor = [];
+    
+    palette_color.forEach((colorDiv) => {
+        colorDiv.addEventListener("click", (event) => {
+            handleColorDivClick(colorDiv);
+        });
+    });
+    let localColors = [];
+    let postEditCells = [];
+
+    function handleColorDivClick(colorDiv) {
+        const backgroundColor = window.getComputedStyle(colorDiv).backgroundColor;
+        background_modal.classList.toggle("hidden");
+        
+        if (selectedTdsColor) {
+            selectedTdsColor.forEach((cell) => {
+                // const style = window.getComputedStyle(cell);
+                // preEditCells.push(style.backgroundColor);
+                const clonedCell = cell.cloneNode(true); // 선택한 셀을 복사
+                preEditCells.push(clonedCell);
+            
+                cell.style.backgroundColor = backgroundColor;
+                editCells.push(cell);
+            });
+
+            undoStack.push(preEditCells);
+            postEditCells.push(selectedTdsColor);
+            
+            preEditCells = [];
+            
+            selectedTdsColor = [];
+        }
+    }
+
+    // background icon end
+
+
     let preTool = null
 
     table_tools.forEach((tool, index) =>{
@@ -54,26 +255,78 @@ const body = document.querySelector("body"),
         });
 
         tool.addEventListener("click", ()=>{
-            if (index == 6){
-                let rowIndexList = []
-                let cellIndexList = []
-                console.log(selectedTds);
-                selectedTds.forEach((td)=>{
-                    const rowIndex = td.parentElement.rowIndex;
-                    const cellIndex = td.cellIndex;
+            let rowIndexList = []
+            let cellIndexList = []
 
-                    rowIndexList.push(rowIndex);
-                    cellIndexList.push(cellIndex);
-                    editCells.push(td);
+            selectedTds.forEach((td)=>{
+                const rowIndex = td.parentElement.rowIndex;
+                const cellIndex = td.cellIndex;
+
+                rowIndexList.push(rowIndex);
+                cellIndexList.push(cellIndex);
+            })
+
+            const rowMax = Math.max(...rowIndexList);
+            const rowMin = Math.min(...rowIndexList);
+            const colMax = Math.max(...cellIndexList);
+            const colMin = Math.min(...cellIndexList);
+
+            if (index == 0){
+                selectedTds.forEach((td, index)=>{
+                    const cellIndex = td.cellIndex;
+               
+                    if (cellIndex == colMax){
+                        td.style.borderRight = "2px solid black";
+                        editCells.push(td);
+                    }
                 })
 
-                const rowMax = Math.max(...rowIndexList);
-                const rowMin = Math.min(...rowIndexList);
-                const colMax = Math.max(...cellIndexList);
-                const colMin = Math.min(...cellIndexList);
+            }
+            else if (index == 1){
+                selectedTds.forEach((td, index)=>{
+                    const cellIndex = td.cellIndex;
+               
+                    if (cellIndex == colMin){
+                        td.style.borderLeft = "2px solid black";
+                        editCells.push(td);
+                    }
+                })
+            }
+            else if (index == 2){
+                selectedTds.forEach((td, index)=>{
+                    const rowIndex = td.parentElement.rowIndex;
+               
+                    if (rowIndex == rowMin){
+                        td.style.borderTop = "2px solid black";
+                        editCells.push(td);
+                    }
+                })
 
-                console.log(rowMax, rowMin, colMax, colMin);
-
+            }
+            else if (index == 3){
+                selectedTds.forEach((td, index)=>{
+                    const rowIndex = td.parentElement.rowIndex;
+               
+                    if (rowIndex == rowMax){
+                        td.style.borderBottom = "2px solid black";
+                        editCells.push(td);
+                    }
+                    
+                })
+            }
+            else if (index == 4){
+                selectedTds.forEach((td)=>{
+                    td.style.border = "";
+                    editCells.push(td);
+                })
+            }
+            else if (index == 5){
+                selectedTds.forEach((td)=>{
+                    td.style.border = "2px solid black";
+                    editCells.push(td);
+                })
+            }
+            else if (index == 6){
                 selectedTds.forEach((td, index)=>{
                     const rowIndex = td.parentElement.rowIndex;
                     const cellIndex = td.cellIndex;
@@ -93,6 +346,8 @@ const body = document.querySelector("body"),
                     if (cellIndex == colMax){
                         td.style.borderRight = "2px solid black";
                     }
+
+                    editCells.push(td);
                 })
             }
             border_modal.classList.toggle("hidden");
@@ -102,8 +357,9 @@ const body = document.querySelector("body"),
 
     // save icon
     document.addEventListener("keydown", (event) => {
-        if (event.ctrlKey && event.key === "s") {
-            event.preventDefault(); // 기본 저장 동작을 막음 (브라우저에서의 저장)
+        // 기본 저장 동작을 막음 (브라우저에서의 저장)
+        if (event.ctrlKey && event.key == "s" || event.ctrlKey && event.key == "S") {
+            event.preventDefault();
             onUpdateCell();
         }
     });
@@ -124,91 +380,6 @@ const body = document.querySelector("body"),
 
     });
 
-    palette_color = body.querySelectorAll(".palette div");
-    recent_color_tag = body.querySelector(".recent-color");
-    teacher_color_tag = body.querySelector(".teacher-color");
-    teacher_hover_tag = body.querySelector("#teacher-hover");
-    teacher_text_tag = body.querySelector(".teacher-text");
-
-    // background icon
-    background_icon.addEventListener("click", (event) =>{
-        const iconRect = background_icon.getBoundingClientRect();
-        const teacherInfo = localStorage.getItem("teacherInfo");
-        const teacherInfoList = JSON.parse(teacherInfo);
-        
-        // 모달 창의 위치 계산
-        const left = iconRect.right + window.scrollX -130; // 클릭한 요소의 오른쪽
-        const bottom = iconRect.bottom + window.scrollY; // 클릭한 요소의 위
-
-        // 모달 창의 위치 설정
-        background_modal.style.left = left + "px";
-        background_modal.style.top = bottom + "px";
-
-        teacher_color_tag.innerHTML = "";
-
-        teacherInfoList.forEach((teacher) => {
-            const newDiv = document.createElement("div");
-           
-            newDiv.style.backgroundColor = teacher.color;
-            newDiv.addEventListener("click", () => {
-                handleColorDivClick(newDiv);
-            });
-
-            let hoverTimer;
-
-            newDiv.addEventListener("mouseenter", () => {
-                hoverTimer = setTimeout(() => {
-                    // 1초 이상 호버되었을 때 스타일 변경 및 추가 작업 수행
-                    teacher_text_tag.textContent = teacher.name;
-
-                    const iconRect = newDiv.getBoundingClientRect();
-                    const left = iconRect.right + window.scrollX+20; // 클릭한 요소의 오른쪽
-                    const bottom = iconRect.bottom + window.scrollY; // 클릭한 요소의 위
-
-                    // 모달 창의 위치 설정
-                    teacher_hover_tag.style.left = left + "px";
-                    teacher_hover_tag.style.top = bottom + "px";
-                    teacher_hover_tag.classList.toggle("hidden");
-                }, 1000); // 1초 (1000 밀리초) 지연
-            });
-        
-            newDiv.addEventListener("mouseleave", () => {
-                clearTimeout(hoverTimer);
-                if (!teacher_hover_tag.classList.contains("hidden")) {
-                    teacher_hover_tag.classList.toggle("hidden");
-                }
-            });
-        
-            teacher_color_tag.appendChild(newDiv);
-        });
-
-        background_modal.classList.toggle("hidden");
-    })
-
-    let selectedTdsColor = [];
-    
-    palette_color.forEach((colorDiv) => {
-        colorDiv.addEventListener("click", (event) => {
-            handleColorDivClick(colorDiv);
-        });
-    });
-    let localColors = [];
-
-    function handleColorDivClick(colorDiv) {
-        const backgroundColor = window.getComputedStyle(colorDiv).backgroundColor;
-        background_modal.classList.toggle("hidden");
-    
-        if (selectedTdsColor) {
-            selectedTdsColor.forEach((cell) => {
-                cell.style.backgroundColor = backgroundColor;
-                editCells.push(cell);
-            });
-            
-            selectedTdsColor = [];
-        }
-    }
-
-    // background icon end
 
     // memo icon
     textareaTag = body.querySelector("#memo");
@@ -339,7 +510,6 @@ const body = document.querySelector("body"),
             canvas.style.top = y + "px";
         }
     }
-
    
     //
 
@@ -386,13 +556,18 @@ const body = document.querySelector("body"),
                 editCells.push(clickedElement);
             }
 
+            if (event.key === "Enter" && event.shiftKey) {
+                event.preventDefault(); // 엔터 키의 기본 동작 방지
+                document.execCommand('insertText', false, '\n'); // 개행 추가
+            }
+
             if (event.key === "Enter"){
                 event.preventDefault(); // 엔터 키의 기본 동작 방지
                 clickedElement.contentEditable = false; // 편집 모드 종료
                 // modifiedTdIds.push(tdId);
             }
         });
-    
+            console.log(clickedElement.style.backgroundColor, "확인해보자");
             clickedElement.style.border = "2px solid #695CFE";
             selectedTd = clickedElement;
             selectedTdsColor.push(selectedTd);
@@ -417,38 +592,40 @@ const body = document.querySelector("body"),
 
     table.addEventListener("mousedown", (event) => {
         deselectTds();
+        console.log(selectedTds);
         const clickedElement = event.target
+        clearTimeout(mouseDownTimer);
+        event.preventDefault();
 
-        mouseDownTimer = setTimeout(function() {
-            if (clickedElement.tagName == "TD" && !teacher_color){
-                console.log("이거");
-                idsMouseDown = true;
-                startTd = clickedElement;
-                endTd = clickedElement;
-                
-                const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
+        if (clickedElement.tagName == "TD" && !teacher_color){
+           
+            idsMouseDown = true;
+            startTd = clickedElement;
+            endTd = clickedElement;
+           
+            const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
     
-                startRowIndex = endRowIndex = clickedElement.parentElement.rowIndex;
-                startColIndex = endColIndex = tdIndex;
-                selectedTds.push(clickedElement);
-                clickedElement.classList.toggle("selected");
-            }else if (clickedElement.tagName == "TD" && teacher_color){
-                idsMouseDown = true;
-                startTd = clickedElement;
-                endTd = clickedElement;
+            startRowIndex = endRowIndex = clickedElement.parentElement.rowIndex;
+            startColIndex = endColIndex = tdIndex;
+            selectedTds.push(clickedElement);
+            clickedElement.classList.toggle("selected");
+        }else if (clickedElement.tagName == "TD" && teacher_color){
+            idsMouseDown = true;
+            startTd = clickedElement;
+            endTd = clickedElement;
                 
-                const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
+            const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
     
-                startRowIndex = endRowIndex = clickedElement.parentElement.rowIndex;
-                startColIndex = endColIndex = tdIndex;
-                selectedTds.push(clickedElement);
-            }
-        }, 250);
+            startRowIndex = endRowIndex = clickedElement.parentElement.rowIndex;
+            startColIndex = endColIndex = tdIndex;
+            selectedTds.push(clickedElement);
+        }
     });
 
     table.addEventListener("mousemove", (event) => {
         const clickedElement = event.target
         if (clickedElement.tagName == "TD" && idsMouseDown && !teacher_color){
+            
             if(selectedTds[0] != event.target){
                 const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
                 endRowIndex = clickedElement.parentElement.rowIndex;
@@ -461,20 +638,18 @@ const body = document.querySelector("body"),
                 const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
                 endRowIndex = clickedElement.parentElement.rowIndex;
                 endColIndex = tdIndex;  
-                console.log(111);
-
+            
                 selectTds();
             }
         }
     });
 
     table.addEventListener("mouseup", () => {
-        clearTimeout(mouseDownTimer);
         idsMouseDown = false;
     });
 
     function selectTds() {
-        selectedTdsColor = selectedTds;
+       
         if (teacher_color){
             selectedTds.forEach((td) => {
                 td.style.backgroundColor = teacher_color;
@@ -482,24 +657,37 @@ const body = document.querySelector("body"),
                     editCells.push(td);
                 }
             });
+
+            selectedTds = [];
+        
+            // 선택된 영역의 TD 선택
+            for (let i = Math.min(startRowIndex, endRowIndex); i <= Math.max(startRowIndex, endRowIndex); i++) {
+              const row = table.rows[i];
+              for (let j = Math.min(startColIndex, endColIndex); j <= Math.max(startColIndex, endColIndex); j++) {
+                const td = row.cells[j];
+                selectedTds.push(td);
+                td.style.backgroundColor = teacher_color;
+              }
+            }
         }else{
             selectedTds.forEach((td) => {
                 td.classList.toggle("selected");
             });
+
+            selectedTds = [];
+        
+            // 선택된 영역의 TD 선택
+            for (let i = Math.min(startRowIndex, endRowIndex); i <= Math.max(startRowIndex, endRowIndex); i++) {
+              const row = table.rows[i];
+              for (let j = Math.min(startColIndex, endColIndex); j <= Math.max(startColIndex, endColIndex); j++) {
+                const td = row.cells[j];
+                selectedTds.push(td);
+                td.classList.toggle("selected");
+              }
+            }
         }
-    
-      
-        selectedTds = [];
-      
-        // 선택된 영역의 TD 선택
-        for (let i = Math.min(startRowIndex, endRowIndex); i <= Math.max(startRowIndex, endRowIndex); i++) {
-          const row = table.rows[i];
-          for (let j = Math.min(startColIndex, endColIndex); j <= Math.max(startColIndex, endColIndex); j++) {
-            const td = row.cells[j];
-            selectedTds.push(td);
-            td.classList.toggle("selected");
-          }
-        }
+        selectedTdsColor = selectedTds;
+
       } 
 
       function deselectTds() {
@@ -703,7 +891,7 @@ async function onDataLecturePost() {
         
         if (responseData.message) {
             roomInput.value = "";
-            console.log(responseData.data.room_id);
+          
             onCreateCell(responseData.data.room_id);
            
         } else {
@@ -718,15 +906,6 @@ async function onDataLecturePost() {
     }
 }
     
-        // 전체 화면에서 키 입력을 감지
-    window.addEventListener('keydown', function(event) {
-        if (event.keyCode === 13 && lecture_modal.classList.toString() === "modal") {
-            onDataLecturePost(); // 
-        } else if (event.keyCode === 13 && plus_modal.classList.toString() === "modal"){
-            console.log("하하");
-        }
-    });
-
     window.onload = function(){
         onDataLectureRoomGet();
         onDataCellGet();
@@ -762,7 +941,6 @@ function onDataLectureGet(){
             new_atag.appendChild(new_span);
             lecture_room_menu.appendChild(new_litag);
         }
-        console.log("호출완료");
     })
     .catch(error => {
         console.error('에러 발생:', error);
@@ -834,7 +1012,7 @@ async function onDataLectureRoomGettest() {
         const data = await response.json();
         const roomNames = data.map(item => item.room_name);
         const roomIdNames = data.map(item => item.room_id);
-        console.log(roomIdNames, "확인");
+        
         localStorage.setItem('roomIdNames', roomIdNames);
     
         const table_lecture_room_test = document.querySelector('.lecture_room');
@@ -953,7 +1131,6 @@ async function postData(dataList) {
 
         if (response.ok) {
             const responseData = await response.json();
-            console.log('데이터 전송 성공:', responseData);
             onDataCellGet();
         } else {
             console.error('데이터 전송 실패:', response.status, response.statusText);
@@ -1231,14 +1408,7 @@ function onUpdateCell(){
         const borderLeft = computedStyle.borderLeft;
 
         combinedBorder = `${borderTop};${borderRight};${borderBottom};${borderLeft}`;
-        console.log(combinedBorder, "sdfsdfsd");
 
-        // if (!borderValue){
-        
-        // }else{
-        //     combinedBorder = borderValue
-            
-        // }
         const pk = td.id;
         const textContent = td.textContent;
         const backgroundColor = computedStyle.backgroundColor;

@@ -6,13 +6,14 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from .serializers import *
 from rest_framework.views import APIView
-from .models import User, LectureRoom, ScheduleCell, Schedule
+from .models import User, LectureRoom, ScheduleCell
 import jwt
 from django.contrib.auth import authenticate
 from pathlib import Path
 import os, json
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
+from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -212,50 +213,37 @@ class ScheduleAPIView(APIView):
             ScheduleCell.objects.bulk_create(datas)
             return Response({"message": 1}, status=status.HTTP_201_CREATED)
             
-    
+    @transaction.atomic
     def put(self, request):
-        data = request.data  
-        pks_to_update = [item["pk"] for item in data]
-        schedule_cells_to_update = ScheduleCell.objects.filter(pk__in=pks_to_update)
-        user_data = User.objects.values('color', 'id')
-        
-        user_index = []
-        schedules_to_create = []
-        # 각 레코드에 대한 필드 업데이트
-        
-        for item, cell in zip(data, schedule_cells_to_update):
-            cell.cell_content = item["cell_content"]
-            cell.border = item["border"]
-            cell.background_color = item["background_color"]
-            matching_ids = [i['id'] for i in user_data if i['color'] == rgb_to_hex(item["background_color"])]
-
-            if matching_ids:
-                schedule = Schedule(
-                user_id_id=matching_ids[0],  # 사용자 ID를 할당합니다
-                room_id=cell.lecture_room_id,
-                year=cell.year,
-                day=cell.day,
-                month=cell.month,
-                time=cell.time
-                )   
-
-                schedules_to_create.append(schedule)
-            
-        
-            cell.save()
-
-        
         try:
-            with transaction.atomic():
-                Schedule.objects.bulk_create(schedules_to_create)
+            data = request.data  
+            pks_to_update = [item["pk"] for item in data]
+            schedule_cells_to_update = ScheduleCell.objects.filter(pk__in=pks_to_update)
+            user_data = User.objects.values('color', 'id')
+        
+            for item, cell in zip(data, schedule_cells_to_update):
+                matching_ids = [i['id'] for i in user_data if i['color'] == rgb_to_hex(item["background_color"])]
+
+                if matching_ids:
+                    user = User.objects.get(id=matching_ids[0])
+                    cell.user_id = user
+                else:
+                    cell.user_id = None
+
+                cell.cell_content = item["cell_content"]
+                cell.border = item["border"]
+                cell.background_color = item["background_color"]
+                cell.save()
+
+            ScheduleCell.objects.bulk_update(schedule_cells_to_update, ["cell_content", "border", "background_color"])
+            return Response({"message": 1}, status=status.HTTP_200_OK)
+        
         except Exception as e:
             error_message = str(e)
             return Response({"message": 0, "error":error_message}, status=status.HTTP_200_OK)
+       
 
-        ScheduleCell.objects.bulk_update(schedule_cells_to_update, ["cell_content", "border", "background_color"])
-
-        return Response({"message": 1}, status=status.HTTP_200_OK)
-
+        
     def delete(self, request, pk):
         try:
             schedule_cell = ScheduleCell.objects.get(pk=pk)

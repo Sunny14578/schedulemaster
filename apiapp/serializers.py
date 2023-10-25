@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Company, LectureRoom, ScheduleCell, Schedule
+from .models import User, Company, LectureRoom, ScheduleCell
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,10 +28,10 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
     
-class UserScheduleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Schedule
-        fields = '__all__'  # 모든 필드를 직렬화
+# class UserScheduleSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Schedule
+#         fields = '__all__'  # 모든 필드를 직렬화
     
 class ScheduleSerializer(serializers.ModelSerializer):
 
