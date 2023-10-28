@@ -1,15 +1,20 @@
+{% load static %}
 <header>
-    <h1>
-        <a href="#">Schedulemaster</a></h1>
-        <nav>
-            <ul>
-                <li><a href = "schedule"> 일정 관리 </a></li>
-                <li><a href = "#"> 질문과 답변 </a></li>
-            </ul>
-            <ul>
-                <li><a id ="user-a"></a></li>
-                <li><a id ="user2-a" onclick="onLogout()">로그아웃</a></li>
-                <li><a id ="login-a" href = "login"> 로그인 </a></li>
-            </ul>
-        </nav>
+        <div class = "title">
+            <img src="{% static 'imges/logo.png' %}" alt="logo">
+            <h1><a href="#">Syncsol</a></h1>
+        </div>
+        <div>
+            <nav>
+                <ul>
+                    <li><a href = "schedule"> 스케줄 관리 </a></li>
+                    <li><a href = "calendar"> 근태 관리 </a></li>
+                </ul>
+                <ul>
+                    <li><a id ="user-a"></a></li>
+                    <li><a id ="user2-a" onclick="onLogout()">로그아웃</a></li>
+                    <li><a id ="login-a" href = "login"> 로그인 </a></li>
+                </ul>
+            </nav>
+        </div>
 </header>

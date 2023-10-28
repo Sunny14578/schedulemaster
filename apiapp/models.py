@@ -37,10 +37,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 	# 헬퍼 클래스 사용
     objects = UserManager()
 
-    USERNAME_FIELD = 'id'
+    USERNAME_FIELD = 'email'
 
-    def __str__(self):
-        return self.id
 
 # 기업(Company) 모델 정의
 class Company(models.Model):

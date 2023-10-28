@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;700&display=swap');
+
+*{
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root{
+    /* Colors */
+    --body--color: #E4E9F7;
+    --sidebar-color: #FFF;
+    --primary-color: #695CFE;
+    --primary-color-light: #F6F5FF;
+    --toggle-color: #DDD;
+    --text-color: #707070;
+
+    /* Transition */
+    --tran-02: all 0.2s ease;
+    --tran-03: all 0.3s ease;
+    --tran-04: all 0.4s ease;
+    --tran-05: all 0.5s ease;
+}
+
+body{
+    height: 100vh;
+}
+
+header{
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+header div:first-child{
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 24vw;
+}
+
+header div i{
+    margin: 5px;
+}
+
+/* tools */
+.header-tools{
+    margin-right: 5vw;
+    font-size: 32px;
+}
+
+
+/* 캘린더 root */
+#calendar{
+    width: 65vw;
+    height: 85vh;
+    position: absolute; /* 위치 지정을 위해 절대 위치로 변경 */
+    top: 50%; /* 화면 상단에서 절반 높이에 위치 */
+    left: 50%; /* 화면 왼쪽에서 절반 너비에 위치 */
+    transform: translate(-50%, -50%); /* 중심을 기준으로 절반만큼 이동하여 가운데 정렬 */
+}
+
+#calendar > div {
+    position: relative;
+}
+
+/* end */
+
+/* 요일 */
+.week-header{
+    display: table-cell;
+    height: 4vh;
+    border-collapse: collapse;
+}
+
+.week-header div{
+    width: 9vw;
+    height: 4vh;
+    border-radius: 5px 5px 0px 0px;
+    border-top: 1px solid var(--toggle-color);
+    border-left: 1px solid var(--toggle-color);;
+    border-right: 1px solid var(--toggle-color);
+    text-align: center;
+    display : table-cell;
+    vertical-align: middle;
+}
+
+.sunday{
+    color: red;
+}
+
+.saturday{
+    color: blue;
+}
+/* 요일 end */
+
+
+/* day */
+.week-row{
+    display: table;
+    height: 13vh;
+    border-collapse: collapse;
+}
+
+.week-row div{
+    width: 9vw;
+    height: 13vh;
+    border: 1px solid var(--toggle-color);
+    display : table-cell;
+    padding-top: 8px;
+    line-height: 100%;
+}
+
+.week-row div span{
+    margin-left: 8px;
+    margin-bottom: 5px;
+}
+
+.schedule{
+    color: white;
+    display: flex;
+    justify-content: center;
+    padding-left: 8px !important;
+}
+
+.week-row > div > div{
+    width: 100%;
+    height: 2.5vh;
+    background-color: #34DACE;
+    display: flex;
+    flex-direction: column; /* 수직으로 배치하도록 설정 */
+    vertical-align: center;
+    padding-top: 0px;
+    padding-left: 0px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.week-row .first{
+    margin-top: 6px;
+}
+
+
+
+/* arrow */
+.bx {
+    cursor: pointer;
+}

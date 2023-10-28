@@ -35,6 +35,7 @@ const body = document.querySelector("body"),
     const undoStack = [];
     let editCells = [];
     let preEditCells = [];
+    let colorCheck;
 
     // base js
     document.body.addEventListener("contextmenu", (event) => {
@@ -44,9 +45,8 @@ const body = document.querySelector("body"),
 
     // 실행취소
     document.addEventListener("keydown", (event) => {
-        
+    
         if (event.ctrlKey && event.key == "z" || event.ctrlKey && event.key == "Z") {
-            console.log(123);
             event.preventDefault();
             const preState = undoStack.pop();
             const postState = postEditCells.pop();
@@ -54,6 +54,7 @@ const body = document.querySelector("body"),
 
             if (preState){
                 preState.forEach((cell, index) =>{
+                    cell.classList.remove('selected');
                     cell.style.filter = 'none'
                     postState[index].replaceWith(cell);
                 });
@@ -90,8 +91,8 @@ const body = document.querySelector("body"),
     quick_menu_icon.forEach((icon, index) =>{
         let iconHoverTimer;
 
-        const contents = ["저장 (Ctrl+S)", "테두리", "", "개발 예정", "채우기 색상", "메모", "달 추가(2개월)"]
-        const widths = ["80px", "50px", "", "50px", "60px", "40px", "90px"]
+        const contents = ["텍스트 색상", "저장 (Ctrl+S)", "테두리", "", "개발 예정", "채우기 색상", "메모", "달 추가(2개월)"]
+        const widths = ["60px", "80px", "50px", "", "50px", "60px", "40px", "90px"]
 
         icon.addEventListener("mouseenter", () => {
             iconHoverTimer = setTimeout(() => {
@@ -118,9 +119,65 @@ const body = document.querySelector("body"),
         icon.addEventListener("click", function() {
             switch (index) {
                 case 0:
+                    colorCheck = 0
+                    const iconRectText = quick_menu_icon[0].getBoundingClientRect();
+                    const teacherInfoText = localStorage.getItem("teacherInfo");
+                    const teacherInfoTextList = JSON.parse(teacherInfoText);
+                    
+                    // 모달 창의 위치 계산
+                    const left2 = iconRectText.right + window.scrollX -130; // 클릭한 요소의 오른쪽
+                    const bottom2 = iconRectText.bottom + window.scrollY; // 클릭한 요소의 위
+            
+                    // 모달 창의 위치 설정
+                    background_modal.style.left = left2 + "px";
+                    background_modal.style.top = bottom2 + "px";
+            
+                    teacher_color_tag.innerHTML = "";
+            
+                    teacherInfoTextList.forEach((teacher) => {
+                        const newDiv = document.createElement("div");
+                       
+                        newDiv.style.backgroundColor = teacher.color;
+                        newDiv.addEventListener("click", () => {
+                            handleColorDivClick(newDiv);
+                        });
+            
+                        let hoverTimer;
+            
+                        newDiv.addEventListener("mouseenter", () => {
+                            hoverTimer = setTimeout(() => {
+                                // 1초 이상 호버되었을 때 스타일 변경 및 추가 작업 수행
+                                teacher_text_tag.textContent = teacher.name;
+            
+                                const iconRect = newDiv.getBoundingClientRect();
+                                const left = iconRect.right + window.scrollX+20; // 클릭한 요소의 오른쪽
+                                const bottom = iconRect.bottom + window.scrollY; // 클릭한 요소의 위
+            
+                                // 모달 창의 위치 설정
+                                teacher_hover_tag.style.left = left + "px";
+                                teacher_hover_tag.style.top = bottom + "px";
+                                teacher_hover_tag.classList.toggle("hidden");
+                            }, 1000); // 1초 (1000 밀리초) 지연
+                        });
+                    
+                        newDiv.addEventListener("mouseleave", () => {
+                            clearTimeout(hoverTimer);
+                            if (!teacher_hover_tag.classList.contains("hidden")) {
+                                teacher_hover_tag.classList.toggle("hidden");
+                            }
+                        });
+                    
+                        teacher_color_tag.appendChild(newDiv);
+                    });
+            
+                    background_modal.classList.toggle("hidden");
+                    break;
+                case 1:
                     onUpdateCell();
                     break;
                 case 3:
+            
+                case 4:
                     // if (selectedTds.length > 1) {
                         
                     //     const firstCell = selectedTds[0];
@@ -140,7 +197,8 @@ const body = document.querySelector("body"),
                     //     selectedTds = [];
                     // }
                     break;
-                case 4:
+                case 5:
+                    colorCheck = 5
                     const iconRect = background_icon.getBoundingClientRect();
                     const teacherInfo = localStorage.getItem("teacherInfo");
                     const teacherInfoList = JSON.parse(teacherInfo);
@@ -219,14 +277,20 @@ const body = document.querySelector("body"),
         const backgroundColor = window.getComputedStyle(colorDiv).backgroundColor;
         background_modal.classList.toggle("hidden");
         
+        
         if (selectedTdsColor) {
             selectedTdsColor.forEach((cell) => {
                 // const style = window.getComputedStyle(cell);
                 // preEditCells.push(style.backgroundColor);
                 const clonedCell = cell.cloneNode(true); // 선택한 셀을 복사
                 preEditCells.push(clonedCell);
-            
-                cell.style.backgroundColor = backgroundColor;
+                
+                if (colorCheck == 5){
+                    cell.style.backgroundColor = backgroundColor;
+                }else if(colorCheck == 0){
+                    cell.style.color = backgroundColor;
+                }
+                
                 editCells.push(cell);
             });
 
@@ -376,10 +440,7 @@ const body = document.querySelector("body"),
             pre_memo.style.border = "1px solid rgb(221, 221, 221)"
             memo_check = 0;
         }
-
-
     });
-
 
     // memo icon
     textareaTag = body.querySelector("#memo");
@@ -399,9 +460,6 @@ const body = document.querySelector("body"),
         memo_check = 1
     })
     
-
-    
-
     // memo icon end
 
     // tools end
@@ -1001,40 +1059,40 @@ function onDataTeacherGet(){
 }
 
 
-async function onDataLectureRoomGettest() {
-    const apiUrl = '/api/lecture/';
+// async function onDataLectureRoomGettest() {
+//     const apiUrl = '/api/lecture/';
 
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+//     try {
+//         const response = await fetch(apiUrl, {
+//             method: 'GET',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//         });
 
-        if (!response.ok) {
-            throw new Error('데이터를 불러오는 데 실패했습니다.');
-        }
+//         if (!response.ok) {
+//             throw new Error('데이터를 불러오는 데 실패했습니다.');
+//         }
 
-        const data = await response.json();
-        const roomNames = data.map(item => item.room_name);
-        const roomIdNames = data.map(item => item.room_id);
-        
-        localStorage.setItem('roomIdNames', roomIdNames);
+//         const data = await response.json();
+//         const roomNames = data.map(item => item.room_name);
+//         const roomIdNames = data.map(item => item.room_id);
+
+//         localStorage.setItem('roomIdNames', roomIdNames);
     
-        const table_lecture_room_test = document.querySelector('.lecture_room');
+//         const table_lecture_room_test = document.querySelector('.lecture_room');
 
-        for (var i = 0; i < roomNames.length; i++) {
-            var new_litag = document.createElement("li");
-            new_litag.contentEditable = true;
-            new_litag.textContent = roomNames[i];
+//         for (var i = 0; i < roomNames.length; i++) {
+//             var new_litag = document.createElement("li");
+//             new_litag.contentEditable = true;
+//             new_litag.textContent = roomNames[i];
 
-            table_lecture_room_test.appendChild(new_litag);
-        }
-    } catch (error) {
-        console.error('에러 발생:', error);
-    }
-}
+//             table_lecture_room_test.appendChild(new_litag);
+//         }
+//     } catch (error) {
+//         console.error('에러 발생:', error);
+//     }
+// }
 
 
 function onDataLectureRoomGet(){
@@ -1048,12 +1106,12 @@ function onDataLectureRoomGet(){
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
         table_lecture_room.innerHTML = '';
         const roomNames = data.map(item => item.room_name);
         const roomIdNames = data.map(item => item.room_id);
-        console.log(roomIdNames);
-        localStorage.setItem('roomIdNames', roomIdNames);
+       
+        localStorage.setItem('roomNames', JSON.stringify(roomNames));
+        localStorage.setItem('roomIdNames', JSON.stringify(roomIdNames));
 
         for (var i=0; i<roomNames.length; i++){
             var new_litag = document.createElement("li");
@@ -1202,17 +1260,34 @@ function isLeapYear(year) {
 
 function onDataCellGet(){
     const apiUrl = '/api/schedule/';
-
+    
     $.ajax({
         url: apiUrl,
         type: 'GET',
         dataType:'json',
         success: function (data){
+
+            const holiday = {"20230101": "1월1일", 
+            "20230121": "설날", "20230122": "설날", 
+            "20230123": "설날", "20230124": "대체공휴일", "20230301": "삼일절", 
+            "20230505": "어린이날", "20230527": "부처님오신날", "20230529": "대체공휴일", 
+            "20230606": "현충일", "20230815": "광복절", "20230928": "추석", 
+            "20230929": "추석", "20230930": "추석", "20231002": "임시공휴일", 
+            "20231003": "개천절", "20231009": "한글날", "20231225": "기독탄신일",
+            "20240101": "1월1일", "20240209": "설날", "20240210": "설날", 
+            "20240211": "설날", "20240212": "대체공휴일(설날)", 
+            "20240301": "삼일절", "20240410": "국회의원선거", 
+            "20240505": "어린이날", "20240506": "대체공휴일(어린이날)", 
+            "20240515": "부처님오신날", "20240606": "현충일", "20240815": "광복절", 
+            "20240916": "추석", "20240917": "추석", "20240918": "추석", 
+            "20241003": "개천절", "20241009": "한글날", "20241225": "기독탄신일"
+            };
+        
         table.innerHTML = '';
         var monthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
         const rooms = localStorage.getItem('roomIdNames');
-        const splitRooms = rooms.split(',');
+        const splitRooms = JSON.parse(rooms);
         const years = data.map(item => item.year);
         const maxYear = Math.max(...years);
         const minYear = Math.min(...years);
@@ -1242,7 +1317,7 @@ function onDataCellGet(){
 
         for (let i = 0; i < splitRooms.length; i++){
             const FilterData = data.filter(item => item.lecture_room_id == splitRooms[i]);
-            
+          
             if (FilterData.length > 0){ 
                 if (i%2==0){
                     thead = document.createElement('thead');
@@ -1260,6 +1335,7 @@ function onDataCellGet(){
                     let minMonth2 = 0;
                     
                     for (let year = 0; year < yearList.length; year++){
+                        console.log(year);
                         
                         if (year == yearList.length-1){
                             MonthCnt = maxMonth;
@@ -1301,18 +1377,22 @@ function onDataCellGet(){
                                 const month = FilteMonthData[j].month;
                                 const day = FilteMonthData[j].day;
                                 const weekendCheck = isWeekend(year, month, day);
-
+                                const checkDate = year+month.toString().padStart(2, '0')+day.toString().padStart(2, '0');
+                             
+                                const holiday2 = holiday[checkDate];
+                               
                                 let back_color = "white"
         
                                 if (weekendCheck == 6){
                                     back_color = "rgb(0, 176, 240)"
-                                }else if (weekendCheck == 0){
+                                }else if (weekendCheck == 0 || holiday2){
                                     back_color = "rgb(255, 0, 0)"
                                 }
 
                                 td.textContent = FilteMonthData[j].day;
                                 td.style.backgroundColor = back_color;
                                 theadRowFragment.appendChild(td);
+                                
                             }
                         }
                         
@@ -1404,7 +1484,6 @@ function onUpdateCell(){
     const data_group = []
 
     editCells.forEach((td) => {
-        console.log(td);
         const computedStyle = window.getComputedStyle(td);
 
         let combinedBorder = null
@@ -1481,4 +1560,3 @@ async function postUpdateData(dataList) {
     }
 }
         
- 

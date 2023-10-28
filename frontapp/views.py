@@ -9,8 +9,8 @@ def login(request):
 def schedule(request):
     return render(request, 'frontapp/schedule.html')
 
-def table(request):
-    return render(request, 'frontapp/table.html')
+def calendar(request):
+    return render(request, 'frontapp/calendar.html')
 
 
 

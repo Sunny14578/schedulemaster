@@ -14,6 +14,8 @@ import os, json
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import JsonResponse
+import json
 # Create your views here.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,6 +31,7 @@ def get_secret(KEY, secrets=secrets):
         error_msg = "Set the {} environment variable".format(KEY)
     raise ImproperlyConfigured(error_msg)
 
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_secret("SECRET_KEY")
 
@@ -36,6 +39,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 class JoinApiView(APIView):
     def post(self, request):
         serializer = UserSerializer(data = request.data)
+        print(serializer)
         
         if serializer.is_valid():
             user = serializer.save()
@@ -99,7 +103,7 @@ class AuthAPIView(APIView):
     # 로그인
     def post(self, request):
     	# 유저 인증
-        print(request.data.get("email"), request.data.get("password"), "ㄴㅇㄹㄴㅇㄹㅇㄴ")
+        print(request.data.get("email"), request.data.get("password"))
         user = authenticate(
             email=request.data.get("email"), password=request.data.get("password")
         )
@@ -177,10 +181,11 @@ class LectureAPIView(APIView):
 
 class ScheduleAPIView(APIView):
     def get(self, request):
+        print("asdfsdf")
         cells = ScheduleCell.objects.all()
         serializer = ScheduleSerializer(cells, many=True)
         return Response(serializer.data)
-
+    
     def post(self, request):
         data = request.data  # 요청 데이터 가져오기
         lecture_room_ids = [item['lecture_room_id'] for item in data]
@@ -235,9 +240,7 @@ class ScheduleAPIView(APIView):
                 cell.border = item["border"]
                 cell.background_color = item["background_color"]
 
-               
-
-            ScheduleCell.objects.bulk_update(schedule_cells_to_update, ["cell_content", "border", "background_color"])
+            ScheduleCell.objects.bulk_update(schedule_cells_to_update, ["cell_content", "border", "background_color", "user_id"])
             return Response({"message": 1}, status=status.HTTP_200_OK)
         
         except Exception as e:
@@ -270,4 +273,8 @@ def rgb_to_hex(rgb):
     except:
         return None
     
-    
+class ScheduleByUserAPIView(APIView):
+    def get(self, request, user_id):
+        cells = ScheduleCell.objects.filter(user_id=user_id)
+        serializer = ScheduleSerializer(cells, many=True)
+        return Response(serializer.data)
