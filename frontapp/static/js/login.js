@@ -53,3 +53,7 @@ window.addEventListener('keydown', function(event) {
         onDataPost(); // 
     }
 });
+
+function goBack() {
+    window.location.href = '/';
+}

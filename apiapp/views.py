@@ -181,7 +181,6 @@ class LectureAPIView(APIView):
 
 class ScheduleAPIView(APIView):
     def get(self, request):
-        print("asdfsdf")
         cells = ScheduleCell.objects.all()
         serializer = ScheduleSerializer(cells, many=True)
         return Response(serializer.data)

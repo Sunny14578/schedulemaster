@@ -12,6 +12,8 @@ def schedule(request):
 def calendar(request):
     return render(request, 'frontapp/calendar.html')
 
+def calendarManage(request):
+    return render(request, 'frontapp/calendarManage.html')
 
 
 

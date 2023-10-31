@@ -46,7 +46,7 @@
 
             <div class="bottom-content">
                 <li class="logout">
-                    <a href="#">
+                    <a  id = "logout" onclick="onLogout()">
                         <i class='bx bx-log-out icon' ></i>
                         <span class="text nav-text logout">로그아웃</span>
                     </a>
@@ -92,6 +92,9 @@
     <section class="home table-menu">
         <div class="quick-menu">
             <div>
+                <i class='bx bx-calendar icon'></i>
+            </div>
+            <div style="border-left: 1px solid lightgray;">
                 <i class='bx bx-font-color icon'></i>
                 <i class='bx bx-save icon'></i>
             </div>
@@ -224,6 +227,18 @@
         <textarea id="memo-text" rows="3" cols="20">
             
         </textarea>
+    </div>
+
+    <div class="date hidden" id = "date">
+        <div>
+            <label for="startMonthPicker">시작 :</label>
+            <input type="month" id="startMonthPicker" name="startMonth">
+        </div>
+        <div>
+            <label for="endMonthPicker">끝 :</label>
+            <input type="month" id="endMonthPicker" name="endMonth">
+        </div>
+        <button id = "dateSelect">조회</button>
     </div>
 
 

@@ -31,6 +31,7 @@ const body = document.querySelector("body"),
     background_icon = body.querySelector(".bx.bxs-color-fill.icon"),
     quick_menu_icon = body.querySelectorAll(".quick-menu i");
     memo_icon = body.querySelector(".bx.bx-memory-card.icon");
+    date_modal = body.querySelector(".date");
     
     const undoStack = [];
     let editCells = [];
@@ -50,7 +51,6 @@ const body = document.querySelector("body"),
             event.preventDefault();
             const preState = undoStack.pop();
             const postState = postEditCells.pop();
-            console.log(preState);
 
             if (preState){
                 preState.forEach((cell, index) =>{
@@ -69,8 +69,9 @@ const body = document.querySelector("body"),
         const tools = body.querySelectorAll(".tools");
         
         const isContained = Array.from(quick_menu_icon).some(icon => icon.contains(clickedElement));
+        const isContained2 = Array.from(tools).some(icon => icon.contains(clickedElement));
 
-        if (!isContained) {
+        if (!isContained && !isContained2) {
             tools.forEach((tool, index) =>{
                 if (tool.classList.contains('hidden')) {
                  
@@ -91,12 +92,12 @@ const body = document.querySelector("body"),
     quick_menu_icon.forEach((icon, index) =>{
         let iconHoverTimer;
 
-        const contents = ["텍스트 색상", "저장 (Ctrl+S)", "테두리", "", "개발 예정", "채우기 색상", "메모", "달 추가(2개월)"]
-        const widths = ["60px", "80px", "50px", "", "50px", "60px", "40px", "90px"]
+        const contents = ["날짜 변경" ,"텍스트 색상", "저장 (Ctrl+S)", "테두리", "", "개발 예정", "채우기 색상", "메모", "달 추가(2개월)"]
+        const widths = ["60px", "60px", "80px", "50px", "", "50px", "60px", "40px", "90px"]
 
         icon.addEventListener("mouseenter", () => {
             iconHoverTimer = setTimeout(() => {
-                if (index != 2){
+                if (index != 4){
                     menuText.textContent = contents[index];
 
                     const iconRect = icon.getBoundingClientRect();
@@ -119,8 +120,18 @@ const body = document.querySelector("body"),
         icon.addEventListener("click", function() {
             switch (index) {
                 case 0:
+                    const iconRectDate = quick_menu_icon[0].getBoundingClientRect();
+                    const leftDate = iconRectDate.right + window.scrollX -110; // 클릭한 요소의 오른쪽
+                    const bottomDate = iconRectDate.bottom + window.scrollY; // 클릭한 요소의 위
+
+                    date_modal.style.left = leftDate + "px";
+                    date_modal.style.top = bottomDate + "px";
+
+                    date_modal.classList.toggle("hidden");
+                    break;
+                case 1:
                     colorCheck = 0
-                    const iconRectText = quick_menu_icon[0].getBoundingClientRect();
+                    const iconRectText = quick_menu_icon[1].getBoundingClientRect();
                     const teacherInfoText = localStorage.getItem("teacherInfo");
                     const teacherInfoTextList = JSON.parse(teacherInfoText);
                     
@@ -172,12 +183,10 @@ const body = document.querySelector("body"),
             
                     background_modal.classList.toggle("hidden");
                     break;
-                case 1:
+                case 2:
                     onUpdateCell();
                     break;
-                case 3:
-            
-                case 4:
+                case 5:
                     // if (selectedTds.length > 1) {
                         
                     //     const firstCell = selectedTds[0];
@@ -197,7 +206,7 @@ const body = document.querySelector("body"),
                     //     selectedTds = [];
                     // }
                     break;
-                case 5:
+                case 6:
                     colorCheck = 5
                     const iconRect = background_icon.getBoundingClientRect();
                     const teacherInfo = localStorage.getItem("teacherInfo");
@@ -255,6 +264,20 @@ const body = document.querySelector("body"),
 
         
     });
+    // date select
+    const startMonth = document.getElementById("startMonthPicker");
+    const endMonth = document.getElementById("endMonthPicker");
+    const dateBtn = document.getElementById("dateSelect");
+
+    dateBtn.addEventListener("click", function() {
+        var sDate = startMonth.value;
+        var eDate = endMonth.value;
+
+        onDataCellGet(sDate, eDate);
+        date_modal.classList.toggle("hidden");
+    });
+
+    // 
 
     // background color
     palette_color = body.querySelectorAll(".palette div");
@@ -468,7 +491,19 @@ const body = document.querySelector("body"),
     plus_icon = body.querySelector(".bx.bx-plus.icon.plus");
 
     plus_icon.addEventListener("click", async() =>{
-        plusMonthCreateCell();
+        if (dateCheck){
+            console.log("여기오니?");
+            dateCheck = 0
+      
+            try {
+                await onDataCellGet(); // onDataCellGet() 함수가 완료될 때까지 기다립니다.
+                plusMonthCreateCell();
+            } catch (error) {
+                
+            }
+        }else{
+            plusMonthCreateCell();
+        }
     })
 
     border_modal = body.querySelector("#border_modal");
@@ -970,11 +1005,23 @@ async function onDataLecturePost() {
         console.error("에러 발생:", error);
     }
 }
-    
-    window.onload = function(){
-        onDataLectureRoomGet();
-        onDataCellGet();
+
+const token = localStorage.getItem('authToken');
+let userdataCheck = 1;
+
+if (token) {
+    userdataCheck = JSON.parse(localStorage.getItem('user'));
+} 
+
+
+window.onload = function(){
+    onDataLectureRoomGet();
+    onDataCellGet();
+
+    if (userdataCheck.role == 1){
+
     }
+}
 
 
 function onDataLectureGet(){
@@ -1207,7 +1254,6 @@ async function postData(dataList) {
 
 // 달 추가
 function plusMonthCreateCell(){
-    
     let maxMonth = parseInt(localStorage.getItem('maxMonth'));
     const yearListString = localStorage.getItem("yearList");
     let yearList = JSON.parse(yearListString);
@@ -1219,17 +1265,19 @@ function plusMonthCreateCell(){
     }
    
     const lastYear = (yearList[yearList.length-1]);
-
+    
     var monthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
     const rooms = localStorage.getItem('roomIdNames');
-    const splitRooms = rooms.split(',');
+    const splitRooms = JSON.parse(rooms);
 
     data_group = []
 
     if (isLeapYear(lastYear)){
         monthsDays[1] = 29
     }
+
+    console.log(maxMonth, lastYear, "확인");
 
     for (let room_id = 0; room_id < splitRooms.length; room_id++){
         for (let month = maxMonth; month < maxMonth+2; month++){
@@ -1247,7 +1295,7 @@ function plusMonthCreateCell(){
             }
         }
     }
-
+    console.log(data_group);
     postData(data_group);
 }
 // 윤년판단
@@ -1258,61 +1306,111 @@ function isLeapYear(year) {
     return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
 }
 
-function onDataCellGet(){
-    const apiUrl = '/api/schedule/';
-    
-    $.ajax({
-        url: apiUrl,
-        type: 'GET',
-        dataType:'json',
-        success: function (data){
-
-            const holiday = {"20230101": "1월1일", 
+const holiday = {"20230101": "신정", 
             "20230121": "설날", "20230122": "설날", 
             "20230123": "설날", "20230124": "대체공휴일", "20230301": "삼일절", 
             "20230505": "어린이날", "20230527": "부처님오신날", "20230529": "대체공휴일", 
             "20230606": "현충일", "20230815": "광복절", "20230928": "추석", 
             "20230929": "추석", "20230930": "추석", "20231002": "임시공휴일", 
             "20231003": "개천절", "20231009": "한글날", "20231225": "기독탄신일",
-            "20240101": "1월1일", "20240209": "설날", "20240210": "설날", 
+            "20240101": "신정", "20240209": "설날", "20240210": "설날", 
             "20240211": "설날", "20240212": "대체공휴일(설날)", 
             "20240301": "삼일절", "20240410": "국회의원선거", 
             "20240505": "어린이날", "20240506": "대체공휴일(어린이날)", 
             "20240515": "부처님오신날", "20240606": "현충일", "20240815": "광복절", 
             "20240916": "추석", "20240917": "추석", "20240918": "추석", 
             "20241003": "개천절", "20241009": "한글날", "20241225": "기독탄신일"
-            };
+};
+
+let dateCheck = 0
+
+function onDataCellGet(sDate, eDate){
+    return new Promise((resolve, reject) => {
+
+    const apiUrl = '/api/schedule/';
+    
+    let sYear;
+    let sMonth;
+    let eYear;
+    let eMonth;
+    
+    let monthList = []
+    let totalDays = 0;
+    dateCheck = 0
+
+    if (sDate && eDate){
+        sYear = parseInt(sDate.split('-')[0]);
+        sMonth = parseInt(sDate.split('-')[1]);
+    
+        eYear = parseInt(eDate.split('-')[0]);
+        eMonth = parseInt(eDate.split('-')[1]);
+
+        if (sYear == eYear){
+            monthList.push([sMonth, eMonth]);
+        }else{
+            monthList.push([sMonth, 12]);
+        }
         
+        for (let y = sYear; y < eYear+1; y++){
+            if(y!=sYear && y!=eYear){
+                monthList.push([1, 12]);
+            }
+        }
+
+        monthList.push([1, eMonth]);
+        
+        dateCheck = 1
+    }
+  
+    $.ajax({
+        url: apiUrl,
+        type: 'GET',
+        dataType:'json',
+        success: function (data){
+
         table.innerHTML = '';
         var monthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
+        
         const rooms = localStorage.getItem('roomIdNames');
         const splitRooms = JSON.parse(rooms);
+
+        const currentDate = new Date(); 
+        let currentYear = currentDate.getFullYear(); 
+        let currentMonth = currentDate.getMonth();
+
         const years = data.map(item => item.year);
-        const maxYear = Math.max(...years);
-        const minYear = Math.min(...years);
+        let maxYear = Math.max(...years);
+        let minYear = currentYear;
+        
 
         const yearList = [];
         const maxMonthList = [];
         const minMonthList = [];
+
+        if (dateCheck){
+            minYear = sYear;
+            maxYear = eYear;
+        }
 
         for (let yy = minYear; yy <= maxYear; yy++) {
             yearList.push(yy);
         }
 
         localStorage.setItem('yearList', JSON.stringify(yearList));
-
+        
         const maxYeardata = data.filter(item => item.year == maxYear);
         const months = maxYeardata.map(item => item.month);
-        const maxMonth = Math.max(...months);
+        let maxMonth = Math.max(...months);
 
         const minYeardata = data.filter(item => item.year == minYear);
         const months2 = minYeardata.map(item => item.month);
-        const minMonth = Math.min(...months2);
+        let minMonth = Math.min(...months2);
 
-        localStorage.setItem('maxMonth', maxMonth);
-        localStorage.setItem('minMonth', minMonth);
-
+        if (!dateCheck){
+            localStorage.setItem('maxMonth', maxMonth);
+            localStorage.setItem('minMonth', minMonth);
+        }
+       
         let thead;
 
         for (let i = 0; i < splitRooms.length; i++){
@@ -1335,8 +1433,6 @@ function onDataCellGet(){
                     let minMonth2 = 0;
                     
                     for (let year = 0; year < yearList.length; year++){
-                        console.log(year);
-                        
                         if (year == yearList.length-1){
                             MonthCnt = maxMonth;
                         }else{
@@ -1348,31 +1444,47 @@ function onDataCellGet(){
                         }else{
                             monthsDays[1] = 28
                         }
-
+                        
                         const FilterYearData = FilterRowData.filter(item => item.year == yearList[year]);
                         const months = FilterYearData.map(item => item.month);
                         maxMonth2 = Math.max(...months);
+                        minMonth2 = Math.min(...months);
 
-                        const months2 = FilterYearData.map(item => item.month);
-                        minMonth2 = Math.min(...months2);
+                        if (yearList[year] == currentYear){
+                            minMonth2 = currentMonth+1;    
+                        }else{
+                            minMonth2 = Math.min(...months);
+                        }
+                        
                         maxMonthList.push(JSON.stringify(maxMonth2));
                         minMonthList.push(JSON.stringify(minMonth2));
                         let monthRange = 0;
 
-                        if (maxMonth2 == minMonth2){
-                            monthRange = maxMonth2;
-                        }else{
-                            monthRange = maxMonth2;
+                        monthRange = maxMonth2;
+                      
+                        if (dateCheck){
+                            if (minMonth2 <= monthList[year][0]){
+                                minMonth2 = monthList[year][0];
+                            }
+
+                            if (maxMonth2 < monthList[year][1]){
+                                monthRange = maxMonth2;
+                               
+                            }else{
+                                monthRange = monthList[year][1];
+                            }
                         }
-                        
+                 
                         for (let mm = minMonth2; mm < monthRange+1; mm++){
                             const monthIndex = mm > 12 ? mm - 12 : mm;
+                            console.log(monthIndex);
                             
                             const FilteMonthData = FilterYearData.filter(item => item.month == monthIndex)
                             
                             for (let j = 0; j < monthsDays[monthIndex-1]; j++){
+                                totalDays+=1;
+                                
                                 const td = document.createElement('td');
-
                                 const year = FilteMonthData[j].year;
                                 const month = FilteMonthData[j].month;
                                 const day = FilteMonthData[j].day;
@@ -1416,6 +1528,11 @@ function onDataCellGet(){
                 const tbody = document.createElement('tbody');
                 tbody.setAttribute('id', rooms[i]+"tbody");
 
+                if(dateCheck){
+                    currentYear = sYear;
+                    currentMonth = sMonth-1;
+                }
+                
                 for (let i = 0; i < 10; i++){
                     const tr = document.createElement('tr');
                     if (i == 5){
@@ -1423,18 +1540,35 @@ function onDataCellGet(){
                     }
 
                     const rowfragment = document.createDocumentFragment();
-                    const FilterRowData = FilterData.filter(item => item.time == indexTime[i]);
+                    const FilterRowData = FilterData.filter(item => item.time == indexTime[i])
+                    const FilterYearMonthData = FilterRowData.filter(item => {
+                        const itemYear = item.year; 
+                        const itemMonth = item.month; 
+                    
+                        if (itemYear > currentYear) {
+                            return true; // 연도가 현재 연도보다 큰 경우
+                        } else if (itemYear === currentYear && itemMonth >= currentMonth+1) {
+                            return true; // 연도가 현재 연도와 같고 월이 현재 월 이후인 경우
+                        } else {
+                            return false; // 그 외의 경우
+                        }
+                    });
 
-                    const cols = FilterRowData.length;
-
+                    // let cols = FilterRowData.length;
+                    let cols = FilterYearMonthData.length;
+                    
+                    if (dateCheck){
+                        cols = totalDays;
+                    }
+                    
                     for (let j = 0; j < cols; j++){
                         const td = document.createElement('td');
-                        td.setAttribute('id', FilterRowData[j].schedule_cell+"td");
-                        const cellContent = FilterRowData[j].cell_content;
-                        const border = FilterRowData[j].border;
+                        td.setAttribute('id', FilterYearMonthData[j].schedule_cell+"td");
+                        const cellContent = FilterYearMonthData[j].cell_content;
+                        const border = FilterYearMonthData[j].border;
                         const boder_list = border.split(';');
                      
-                        let backgroundColor = FilterRowData[j].background_color;
+                        let backgroundColor = FilterYearMonthData[j].background_color;
                       
                         td.textContent = cellContent;
                         td.style.borderTop = boder_list[0];
@@ -1458,10 +1592,15 @@ function onDataCellGet(){
         localStorage.setItem('maxMonthList', maxMonthList);
         localStorage.setItem('minMonthList', minMonthList);
 
+        resolve();
+
         },
         error: function (xhr, status, error){
             console.error('데이터 가져오기 실패:', status, error);
+            reject();
         }
+    });
+
     });
 }
 // 주말체크
@@ -1559,4 +1698,42 @@ async function postUpdateData(dataList) {
        console.error("데이터 전송 중 오류:", error);
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    // 토큰 정보 가져오기
+    
+    const token = localStorage.getItem('authToken');
+
+    const logoutTag = document.getElementById('logout');
+
+    if (token) {
+     
+    } else {
         
+    }
+});
+
+function onLogout() {
+    // DELETE 요청 보내기
+    const apiUrl = '/api/logout/';
+
+    fetch(apiUrl, {
+        method: 'delete',
+        credentials: 'include', // 쿠키를 서버로 보내기 위해 필요한 옵션
+    })
+    .then(response => {
+        if (response.ok) {
+            // 로그아웃 성공
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+
+            window.location.href = '/login';
+        } else {
+            console.error('로그아웃 실패');
+        }
+    })
+    .catch(error => {
+        console.error('오류 발생:', error);
+    });
+}
+
