@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from .views import JoinApiView, AuthAPIView, LectureAPIView, Create_Company, TeacherAPIView, ScheduleAPIView, ScheduleByUserAPIView
+from .views import JoinApiView, AuthAPIView, LectureAPIView, Create_Company, TeacherAPIView, ScheduleAPIView, ScheduleByUserAPIView, UserAPIView
 
 urlpatterns = [
     path('join/user/', JoinApiView.as_view()),
@@ -11,6 +11,7 @@ urlpatterns = [
     path('lecture/', LectureAPIView.as_view()),
     path('schedule/', ScheduleAPIView.as_view()),
     path('schedule/<int:user_id>/', ScheduleByUserAPIView.as_view()),
+    path('usercheck/', UserAPIView.as_view()),
     # path('holiday/', holidayGetAPIView),
     # path('schedule/<int:pk>/', ScheduleAPIView.as_view()),
 ]

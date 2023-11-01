@@ -92,8 +92,8 @@ const body = document.querySelector("body"),
     quick_menu_icon.forEach((icon, index) =>{
         let iconHoverTimer;
 
-        const contents = ["날짜 변경" ,"텍스트 색상", "저장 (Ctrl+S)", "테두리", "", "개발 예정", "채우기 색상", "메모", "달 추가(2개월)"]
-        const widths = ["60px", "60px", "80px", "50px", "", "50px", "60px", "40px", "90px"]
+        const contents = ["날짜 변경" ,"텍스트 색상", "저장 (Ctrl+S)", "테두리", "", "개발 예정", "채우기 색상", "메모", "달 추가(2개월)", "스케줄 오픈"];
+        const widths = ["60px", "60px", "80px", "50px", "", "50px", "60px", "40px", "90px", "70px"];
 
         icon.addEventListener("mouseenter", () => {
             iconHoverTimer = setTimeout(() => {
@@ -259,6 +259,9 @@ const body = document.querySelector("body"),
                     });
             
                     background_modal.classList.toggle("hidden");
+
+                case 9:
+                    onUserOpendata();
             }
         });
 
@@ -1014,16 +1017,6 @@ if (token) {
 } 
 
 
-window.onload = function(){
-    onDataLectureRoomGet();
-    onDataCellGet();
-
-    if (userdataCheck.role == 1){
-
-    }
-}
-
-
 function onDataLectureGet(){
     const apiUrl = '/api/lecture/';
 
@@ -1104,43 +1097,6 @@ function onDataTeacherGet(){
         console.error('에러 발생:', error);
     });
 }
-
-
-// async function onDataLectureRoomGettest() {
-//     const apiUrl = '/api/lecture/';
-
-//     try {
-//         const response = await fetch(apiUrl, {
-//             method: 'GET',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//         });
-
-//         if (!response.ok) {
-//             throw new Error('데이터를 불러오는 데 실패했습니다.');
-//         }
-
-//         const data = await response.json();
-//         const roomNames = data.map(item => item.room_name);
-//         const roomIdNames = data.map(item => item.room_id);
-
-//         localStorage.setItem('roomIdNames', roomIdNames);
-    
-//         const table_lecture_room_test = document.querySelector('.lecture_room');
-
-//         for (var i = 0; i < roomNames.length; i++) {
-//             var new_litag = document.createElement("li");
-//             new_litag.contentEditable = true;
-//             new_litag.textContent = roomNames[i];
-
-//             table_lecture_room_test.appendChild(new_litag);
-//         }
-//     } catch (error) {
-//         console.error('에러 발생:', error);
-//     }
-// }
-
 
 function onDataLectureRoomGet(){
     const apiUrl = '/api/lecture/';
@@ -1477,7 +1433,6 @@ function onDataCellGet(sDate, eDate){
                  
                         for (let mm = minMonth2; mm < monthRange+1; mm++){
                             const monthIndex = mm > 12 ? mm - 12 : mm;
-                            console.log(monthIndex);
                             
                             const FilteMonthData = FilterYearData.filter(item => item.month == monthIndex)
                             
@@ -1603,6 +1558,202 @@ function onDataCellGet(sDate, eDate){
 
     });
 }
+
+// 직원 Get
+
+function onDataUserCellGet(){
+    return new Promise((resolve, reject) => {
+
+    const apiUrl = '/api/schedule/';
+ 
+    $.ajax({
+        url: apiUrl,
+        type: 'GET',
+        dataType:'json',
+        success: function (data){
+
+        table.innerHTML = '';
+        var monthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        
+        const rooms = localStorage.getItem('roomIdNames');
+        const splitRooms = JSON.parse(rooms);
+
+        const currentDate = new Date(); 
+        let currentYear = currentDate.getFullYear(); 
+        let currentMonth = currentDate.getMonth();
+        let yearCheck;
+
+        const years = data.map(item => item.year);
+       
+        let yearList = []
+
+        yearList.push(currentYear);
+       
+        if (currentMonth == 11){
+            yearList.push(currentYear+1);
+            yearCheck = 1
+        }
+
+        for (let i = 0; i < splitRooms.length; i++){
+            const FilterData = data.filter(item => item.lecture_room_id == splitRooms[i]);
+          
+            if (FilterData.length > 0){ 
+                if (i%2==0){
+                    thead = document.createElement('thead');
+                    
+                    const FilterRowData = FilterData.filter(item => item.time == indexTime[0]);
+                    const cols = FilterRowData.length;
+    
+                    const tr = document.createElement('tr');
+                    const theadRowFragment = document.createDocumentFragment();
+
+                    const tr2 = document.createElement('tr');
+                    const theadRowFragment2 = document.createDocumentFragment();
+                   
+                    let maxMonth2 = 0;
+                    let minMonth2 = 0;
+                    
+                    for (let year = 0; year < yearList.length; year++){
+                        if (isLeapYear(yearList[year])){
+                            monthsDays[1] = 29
+                        }else{
+                            monthsDays[1] = 28
+                        }
+                        
+                        const FilterYearData = FilterRowData.filter(item => item.year == yearList[year]);
+                    
+                        if (year == 1){
+                            maxMonth2 = 0;
+                            minMonth2 = 0;
+                        }else{
+                            maxMonth2 = currentMonth+1;
+                            minMonth2 = currentMonth+1;
+                        }
+
+                        let monthRange = maxMonth2+1;
+                     
+                        for (let mm = minMonth2; mm < monthRange+1; mm++){
+                            
+                            const monthIndex = mm > 12 ? mm - 12 : mm;    
+                            const FilteMonthData = FilterYearData.filter(item => item.month == monthIndex)
+                            
+                            for (let j = 0; j < monthsDays[monthIndex-1]; j++){
+                                const td = document.createElement('td');
+                                const year = FilteMonthData[j].year;
+                                const month = FilteMonthData[j].month;
+                                const day = FilteMonthData[j].day;
+                                const weekendCheck = isWeekend(year, month, day);
+                                const checkDate = year+month.toString().padStart(2, '0')+day.toString().padStart(2, '0');
+                             
+                                const holiday2 = holiday[checkDate];
+                               
+                                let back_color = "white"
+        
+                                if (weekendCheck == 6){
+                                    back_color = "rgb(0, 176, 240)"
+                                }else if (weekendCheck == 0 || holiday2){
+                                    back_color = "rgb(255, 0, 0)"
+                                }
+
+                                td.textContent = FilteMonthData[j].day;
+                                td.style.backgroundColor = back_color;
+                                theadRowFragment.appendChild(td);
+                                
+                            }
+                        }
+                        
+                        for (let m = minMonth2; m < monthRange+1; m++){
+                            const monthIndex = m > 12 ? m - 12 : m;
+
+                            const td2 = document.createElement('td');
+                            td2.textContent = monthIndex+"월";
+                            td2.setAttribute('colspan', monthsDays[monthIndex-1]);
+                            theadRowFragment2.appendChild(td2);
+                            td2.style.backgroundColor = bgcolor[monthIndex-1];
+                        }
+                    }
+                    tr.appendChild(theadRowFragment);
+                    thead.appendChild(tr)
+                    tr2.appendChild(theadRowFragment2);
+                    thead.appendChild(tr2);
+                    table.appendChild(thead);
+                }
+
+                const tbody = document.createElement('tbody');
+                tbody.setAttribute('id', rooms[i]+"tbody");
+
+                for (let i = 0; i < 10; i++){
+                    const tr = document.createElement('tr');
+                    if (i == 5){
+                        tr.setAttribute('class', "row-block");
+                    }
+
+                    const rowfragment = document.createDocumentFragment();
+                    const FilterRowData = FilterData.filter(item => item.time == indexTime[i])
+                    let FilterYearMonthData;
+
+                    const startMonth = currentMonth+1;
+                    const endMonth = startMonth+1;
+                    
+                    if (yearCheck){
+                        FilterYearMonthData = FilterRowData.filter(item => {
+                            return (
+                                (item.year == yearList[0] && item.month == 12) ||
+                                (item.year == yearList[1] && item.month == 1)
+                            );
+                        });
+                    }else{
+                        FilterYearMonthData = FilterRowData.filter(item => {
+                            return (
+                                (item.year === currentYear && item.month >= startMonth && item.month <= endMonth)
+                            );
+                        });
+                    }
+                   
+                    
+                    let cols = FilterYearMonthData.length;
+                 
+                    for (let j = 0; j < cols; j++){
+                        const td = document.createElement('td');
+                        td.setAttribute('id', FilterYearMonthData[j].schedule_cell+"td");
+                        const cellContent = FilterYearMonthData[j].cell_content;
+                        const border = FilterYearMonthData[j].border;
+                        const boder_list = border.split(';');
+                     
+                        let backgroundColor = FilterYearMonthData[j].background_color;
+                      
+                        td.textContent = cellContent;
+                        td.style.borderTop = boder_list[0];
+                        td.style.borderRight = boder_list[1];
+                        td.style.borderBottom = boder_list[2];
+                        td.style.borderLeft = boder_list[3];
+                        
+                        if (backgroundColor != 'white'){
+                            td.style.backgroundColor = backgroundColor;
+                        }
+                    
+                        rowfragment.appendChild(td);
+                    }
+                    tr.appendChild(rowfragment);
+                    tbody.appendChild(tr);
+                }
+                table.appendChild(tbody);
+                
+            }
+        }
+
+        resolve();
+
+        },
+        error: function (xhr, status, error){
+            console.error('데이터 가져오기 실패:', status, error);
+            reject();
+        }
+    });
+
+    });
+}
+
 // 주말체크
 function isWeekend(year, month, day) {
     // js에서 월은 0부터 시작
@@ -1735,5 +1886,90 @@ function onLogout() {
     .catch(error => {
         console.error('오류 발생:', error);
     });
+}
+
+const checkIcon = body.querySelector(".bx.bx-check.icon");
+
+function onUserOpendata(){
+    const apiUrl = '/api/usercheck/';
+
+    let data = 0;
+
+    if (userdataCheck.updateCheck == 0){
+        data = 1
+    }else{
+        data = 0
+    }
+
+    const reqData = {
+        data: data, // 원하는 값으로 변경
+    };
+
+    fetch(apiUrl, {
+        method: 'put',
+        headers: {
+            'Content-Type': 'application/json', // 요청의 본문 타입 설정
+        },
+        body: JSON.stringify(reqData),
+    })
+    .then(response => response.json()) // JSON 응답 파싱
+    .then(data => {
+        localStorage.setItem('updateCheck', JSON.stringify(data.message));
+
+        if (data.message == 1){
+            checkIcon.style.color = "#695CFE";
+            checkIcon.style.fontWeight = "bold";
+        }else{
+            checkIcon.style.color = "gray";
+            checkIcon.style.fontWeight = "100";
+        }
+    })
+    .catch(error => {
+         console.error('오류 발생:', error);
+    });
+}
+
+function onUserUpdateCheck(){
+    const apiUrl = '/api/usercheck/';
+
+    fetch(apiUrl, {
+        method: 'get',
+        headers: {
+          'Content-Type': 'application/json',
+          // 필요한 경우 헤더에 인증 토큰 또는 기타 필수 헤더를 추가하세요
+        },
+      })
+        .then((response) => {
+          if (response.ok) {
+            // HTTP 상태 코드가 200 OK인 경우
+            return response.json(); // 응답 데이터를 JSON으로 파싱
+          } else {
+            throw new Error('서버에서 오류 응답을 받았습니다.');
+          }
+        })
+        .then((data) => {
+          if (data.message == 1){
+            checkIcon.style.color = "#695CFE";
+            checkIcon.style.fontWeight = "bold";
+        }else{
+            checkIcon.style.color = "gray";
+            checkIcon.style.fontWeight = "100";
+        }
+        })
+        .catch((error) => {
+          console.error('오류 발생:', error);
+        });
+}
+
+window.onload = function(){
+    onDataLectureRoomGet();
+    // 
+    if (userdataCheck.role == 1){
+        onDataCellGet();
+    }else{
+        onDataUserCellGet();
+    }
+    onUserUpdateCheck();
+
 }
 

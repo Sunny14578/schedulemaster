@@ -33,6 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=20)   # 전화번호
     role = models.CharField(max_length=50, default=2)  # 사용자 역할 ( 예: 관리자(1), 직원(2) )
     company_id = models.ForeignKey('Company', on_delete=models.CASCADE)  # 소속 기업 ID (외래 키)
+    updateCheck = models.IntegerField(default=0) # 스케줄 오픈여부
 
 	# 헬퍼 클래스 사용
     objects = UserManager()

@@ -39,7 +39,6 @@ SECRET_KEY = get_secret("SECRET_KEY")
 class JoinApiView(APIView):
     def post(self, request):
         serializer = UserSerializer(data = request.data)
-        print(serializer)
         
         if serializer.is_valid():
             user = serializer.save()
@@ -103,11 +102,9 @@ class AuthAPIView(APIView):
     # 로그인
     def post(self, request):
     	# 유저 인증
-        print(request.data.get("email"), request.data.get("password"))
         user = authenticate(
             email=request.data.get("email"), password=request.data.get("password")
         )
-        print(user, "확인해보자")
         # 이미 회원가입 된 유저일 때
         if user is not None:
             serializer = UserSerializer(user)
@@ -134,6 +131,8 @@ class AuthAPIView(APIView):
             return Response({
                 "message" : 0
             })
+        
+  
 
     # 로그아웃
     def delete(self, request):
@@ -144,7 +143,30 @@ class AuthAPIView(APIView):
         response.delete_cookie("access")
         response.delete_cookie("refresh")
         return response
-    
+
+class UserAPIView(APIView):
+    def get(self, request):
+        try:
+            userData = User.objects.all()
+            return Response({'message' : userData[0].updateCheck})
+
+        except:
+            return Response({'message': '사용자를 찾을 수 없음'}, status=404)
+
+    def put(self, request):
+        try:
+            userData = User.objects.all()
+            
+            if userData[0].updateCheck == 1:
+                updateDate = 0
+            else:
+                updateDate = 1
+
+            User.objects.update(updateCheck=updateDate)
+        
+            return Response({'message': updateDate})
+        except User.DoesNotExist:
+            return Response({'message': '사용자를 찾을 수 없음'}, status=404)
 
 ### 기업생성
 
