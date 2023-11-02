@@ -1561,9 +1561,8 @@ function onDataCellGet(sDate, eDate){
 
 // 직원 Get
 
-function onDataUserCellGet(){
+function onDataUserCellGet(updateCheck){
     return new Promise((resolve, reject) => {
-
     const apiUrl = '/api/schedule/';
  
     $.ajax({
@@ -1589,7 +1588,7 @@ function onDataUserCellGet(){
 
         yearList.push(currentYear);
        
-        if (currentMonth == 11){
+        if (!updateCheck && currentMonth == 11){
             yearList.push(currentYear+1);
             yearCheck = 1
         }
@@ -1631,7 +1630,11 @@ function onDataUserCellGet(){
                         }
 
                         let monthRange = maxMonth2+1;
-                     
+
+                        if (updateCheck){
+                            monthRange = maxMonth2;
+                        }
+                        
                         for (let mm = minMonth2; mm < monthRange+1; mm++){
                             
                             const monthIndex = mm > 12 ? mm - 12 : mm;    
@@ -1693,7 +1696,11 @@ function onDataUserCellGet(){
                     let FilterYearMonthData;
 
                     const startMonth = currentMonth+1;
-                    const endMonth = startMonth+1;
+                    let endMonth = startMonth+1;
+
+                    if (updateCheck){
+                        endMonth = startMonth;
+                    }
                     
                     if (yearCheck){
                         FilterYearMonthData = FilterRowData.filter(item => {
@@ -1870,11 +1877,10 @@ function onLogout() {
 
     fetch(apiUrl, {
         method: 'delete',
-        credentials: 'include', // 쿠키를 서버로 보내기 위해 필요한 옵션
+        credentials: 'include', 
     })
     .then(response => {
         if (response.ok) {
-            // 로그아웃 성공
             localStorage.removeItem('authToken');
             localStorage.removeItem('user');
 
@@ -1890,6 +1896,7 @@ function onLogout() {
 
 const checkIcon = body.querySelector(".bx.bx-check.icon");
 
+
 function onUserOpendata(){
     const apiUrl = '/api/usercheck/';
 
@@ -1902,20 +1909,18 @@ function onUserOpendata(){
     }
 
     const reqData = {
-        data: data, // 원하는 값으로 변경
+        data: data, 
     };
 
     fetch(apiUrl, {
         method: 'put',
         headers: {
-            'Content-Type': 'application/json', // 요청의 본문 타입 설정
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify(reqData),
     })
-    .then(response => response.json()) // JSON 응답 파싱
+    .then(response => response.json()) 
     .then(data => {
-        localStorage.setItem('updateCheck', JSON.stringify(data.message));
-
         if (data.message == 1){
             checkIcon.style.color = "#695CFE";
             checkIcon.style.fontWeight = "bold";
@@ -1929,47 +1934,56 @@ function onUserOpendata(){
     });
 }
 
-function onUserUpdateCheck(){
+function onUserUpdateCheck() {
     const apiUrl = '/api/usercheck/';
 
-    fetch(apiUrl, {
-        method: 'get',
-        headers: {
-          'Content-Type': 'application/json',
-          // 필요한 경우 헤더에 인증 토큰 또는 기타 필수 헤더를 추가하세요
-        },
-      })
+    return new Promise((resolve, reject) => {
+        fetch(apiUrl, {
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
         .then((response) => {
-          if (response.ok) {
-            // HTTP 상태 코드가 200 OK인 경우
-            return response.json(); // 응답 데이터를 JSON으로 파싱
-          } else {
-            throw new Error('서버에서 오류 응답을 받았습니다.');
-          }
+            if (response.ok) {
+                return response.json(); 
+            } else {
+                reject(new Error('서버에서 오류 응답을 받았습니다.'));
+            }
         })
         .then((data) => {
-          if (data.message == 1){
-            checkIcon.style.color = "#695CFE";
-            checkIcon.style.fontWeight = "bold";
-        }else{
-            checkIcon.style.color = "gray";
-            checkIcon.style.fontWeight = "100";
-        }
+            if (data.message == 1) {
+                checkIcon.style.color = "#695CFE";
+                checkIcon.style.fontWeight = "bold";
+            } else {
+                checkIcon.style.color = "gray";
+                checkIcon.style.fontWeight = "100";
+            }
+
+            if (userdataCheck.role == 1) {
+                onDataCellGet();
+            } else {
+                onDataUserCellGet(data.message);
+            }
+
+            resolve(data.message); // 데이터를 반환하려면 resolve를 호출합니다.
         })
         .catch((error) => {
-          console.error('오류 발생:', error);
+            console.error('오류 발생:', error);
+            reject(error); // 에러를 다시 던지려면 reject를 호출합니다.
         });
+    });
 }
 
 window.onload = function(){
     onDataLectureRoomGet();
-    // 
-    if (userdataCheck.role == 1){
-        onDataCellGet();
-    }else{
-        onDataUserCellGet();
-    }
     onUserUpdateCheck();
-
+    
+    // if (userdataCheck.role == 1){
+    //     onDataCellGet();
+    // }else{
+    //     onDataUserCellGet();
+    // }
+    
 }
 
