@@ -842,4 +842,5 @@ div.modal.hidden{
 .bx.bx-log-out.icon,
 .text.nav-text.logout{
     color: var(--text-color);
+    cursor: pointer;
 }

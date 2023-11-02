@@ -47,6 +47,8 @@ class JoinApiView(APIView):
             token = TokenObtainPairSerializer.get_token(user)
             refresh_token = str(token)
             access_token = str(token.access_token)
+
+            print(token, "토큰확인")
             res = Response(
                 {
                     "user": serializer.data,

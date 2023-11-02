@@ -32,6 +32,8 @@ const body = document.querySelector("body"),
     quick_menu_icon = body.querySelectorAll(".quick-menu i");
     memo_icon = body.querySelector(".bx.bx-memory-card.icon");
     date_modal = body.querySelector(".date");
+    section = body.querySelector(".home");
+    menu = body.querySelector(".menu");
     
     const undoStack = [];
     let editCells = [];
@@ -455,36 +457,36 @@ const body = document.querySelector("body"),
     });
 
 
-    document.body.addEventListener("click", function(event) {
-        const clickedElement = event.target; // 클릭된 요소
+    // document.body.addEventListener("click", function(event) {
+    //     const clickedElement = event.target; // 클릭된 요소
     
-        // 클릭된 요소가 메모 태그 또는 메모 태그 내부의 요소인 경우 이벤트 무시
-        if (clickedElement === memo_icon ) {
-            memo_check = 2;
-        }else if (memo_check == 2){
-            textareaTag.classList.toggle("hidden");
-            pre_memo.style.border = "1px solid rgb(221, 221, 221)"
-            memo_check = 0;
-        }
-    });
+    //     // 클릭된 요소가 메모 태그 또는 메모 태그 내부의 요소인 경우 이벤트 무시
+    //     if (clickedElement === memo_icon ) {
+    //         memo_check = 2;
+    //     }else if (memo_check == 2){
+    //         textareaTag.classList.toggle("hidden");
+    //         pre_memo.style.border = "1px solid rgb(221, 221, 221)"
+    //         memo_check = 0;
+    //     }
+    // });
 
     // memo icon
-    textareaTag = body.querySelector("#memo");
-    let memo_check = 0
-    let pre_memo;
+    // textareaTag = body.querySelector("#memo");
+    // let memo_check = 0
+    // let pre_memo;
 
-    memo_icon.addEventListener("click", async() => {
-        const iconRect = memo_list.getBoundingClientRect();
-        const left = iconRect.right + window.scrollX+1; // 클릭한 요소의 오른쪽
-        const bottom = iconRect.bottom + window.scrollY-18; // 클릭한 요소의 위
-        memo_list.style.border = "2px solid rgb(0, 0, 0)";
-        pre_memo = memo_list;
-        // 모달 창의 위치 설정
-        textareaTag.style.left = left + "px";
-        textareaTag.style.top = bottom + "px";
-        textareaTag.classList.toggle("hidden");
-        memo_check = 1
-    })
+    // memo_icon.addEventListener("click", async() => {
+    //     const iconRect = memo_list.getBoundingClientRect();
+    //     const left = iconRect.right + window.scrollX+1; // 클릭한 요소의 오른쪽
+    //     const bottom = iconRect.bottom + window.scrollY-18; // 클릭한 요소의 위
+    //     memo_list.style.border = "2px solid rgb(0, 0, 0)";
+    //     pre_memo = memo_list;
+    //     // 모달 창의 위치 설정
+    //     textareaTag.style.left = left + "px";
+    //     textareaTag.style.top = bottom + "px";
+    //     textareaTag.classList.toggle("hidden");
+    //     memo_check = 1
+    // })
     
     // memo icon end
 
@@ -1015,6 +1017,13 @@ let userdataCheck = 1;
 if (token) {
     userdataCheck = JSON.parse(localStorage.getItem('user'));
 } 
+
+if (userdataCheck.role == 2){
+    console.log(123123);
+    section.style.pointerEvents = "none";
+    menu.style.pointerEvents = "none";
+    // pointer-events: none;
+}
 
 
 function onDataLectureGet(){
@@ -1588,7 +1597,7 @@ function onDataUserCellGet(updateCheck){
 
         yearList.push(currentYear);
        
-        if (!updateCheck && currentMonth == 11){
+        if (updateCheck && currentMonth == 11){
             yearList.push(currentYear+1);
             yearCheck = 1
         }
@@ -1631,7 +1640,7 @@ function onDataUserCellGet(updateCheck){
 
                         let monthRange = maxMonth2+1;
 
-                        if (updateCheck){
+                        if (!updateCheck){
                             monthRange = maxMonth2;
                         }
                         
@@ -1698,7 +1707,7 @@ function onDataUserCellGet(updateCheck){
                     const startMonth = currentMonth+1;
                     let endMonth = startMonth+1;
 
-                    if (updateCheck){
+                    if (!updateCheck){
                         endMonth = startMonth;
                     }
                     
