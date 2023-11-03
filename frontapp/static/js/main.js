@@ -4,9 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // 토큰 정보 가져오기
     token = localStorage.getItem('authToken');
 
-    const userLink = document.getElementById('user-a');
-    const userLink2 = document.getElementById('user2-a');
-    const loginLink = document.getElementById('login-a');
+    const userLink = document.getElementById("user-a");
+    const userLink2 = document.getElementById("user2-a");
+    const loginLink = document.getElementById("login-a");
+    const myLink = document.getElementById("myLink");
 
     if (token) {
         // 토큰이 존재하는 경우
@@ -15,6 +16,10 @@ document.addEventListener('DOMContentLoaded', function () {
         loginLink.style.display = 'none';  // 로그인 a태그를 숨김
 
         const userdata = JSON.parse(localStorage.getItem('user'));
+        
+        if(userdata.role == 1){
+            myLink.onclick = onTokenCheck3;
+        }
 
         // 사용자 데이터를 HTML에 표시
         userLink.innerHTML = userdata.name + '님 환영합니다.';
@@ -42,6 +47,10 @@ function onTokenCheck2() {
     } else {
         window.location.href = '/login';
     }
+}
+
+function onTokenCheck3() {
+    window.location.href = '/calendarManage';
 }
 
 function onLogout() {

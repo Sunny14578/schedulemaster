@@ -205,6 +205,13 @@ class LectureAPIView(APIView):
 
 class ScheduleAPIView(APIView):
     def get(self, request):
+
+        year = request.GET.get('year')
+        month = request.GET.get('month')
+
+        if year and month:
+            print("확인해보자")
+
         cells = ScheduleCell.objects.all()
         serializer = ScheduleSerializer(cells, many=True)
         return Response(serializer.data)

@@ -38,6 +38,8 @@ window.onload = function(){
     });
 }
 
+let pschedule;
+
 function onUserDataGet(user_id, callback){
     const apiUrl = '/api/schedule/' + user_id;
 
@@ -46,7 +48,9 @@ function onUserDataGet(user_id, callback){
         type: 'GET',
         dataType:'json',
         success: function (data){
-            totalhour.textContent = data.length+"h";
+            pschedule = data;
+            currentTotalHout(currentYear, currentMonth);
+      
             const timeRanges = groupTimesByDate(data);
             
             for (const key in timeRanges){
@@ -199,6 +203,7 @@ function curruntCreateDiv(){
 
             for (let key=0; key < keyArray.length; key++){
                 const lecSchedule = scheduleInfo[holidaycheck][keyArray[key]];
+             
                 
                 const roomName = roomInfo[keyArray[key]];
                 for (let s=0; s < lecSchedule.length; s++){
@@ -270,6 +275,7 @@ leftarrow.addEventListener("click", function(event) {
     }else{
         currentMonth -=1;
     }
+    currentTotalHout(currentYear, currentMonth);
     curruntCreateDiv();
 });
 
@@ -280,8 +286,18 @@ rightarrow.addEventListener("click", function(event) {
     }else{
         currentMonth +=1;
     }
+    currentTotalHout(currentYear, currentMonth);
     curruntCreateDiv();
 });
+
+function currentTotalHout(cYear, cMonth){
+  
+    var filteredData = pschedule.filter(function (item) {
+        return item.year == cYear && item.month == cMonth+1;
+    });
+
+    totalhour.textContent = filteredData.length+"h";
+}
 
 
 let data = {};

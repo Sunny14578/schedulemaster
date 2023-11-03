@@ -45,16 +45,30 @@
 
 
 header{
-    width: 80%;
-    height: 100px;
+    width: 100%;
+    height: 70px;
     margin:0 auto;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     z-index:100;
-    position : sticky;
     top : 0px;
-    /* align-item 영역의 수직방향 중앙에 위치시킨다. */
+    background-color: var(--sidebar-color);
+    border-bottom-color: #dee2e6;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
 }
+
+
+header div:nth-child(2) {
+    width: 100%;
+}
+
+header nav ul:first-child{
+    margin-left: 15vw;
+}
+
+
 
 header h2 a{
     color : black;
@@ -63,14 +77,10 @@ header h2 a{
     font-family: 'PyeongChangPeace-Bold', sans-serif;
 }
 
-nav{
-   margin-left: 14vw;
-}
-
 .title{
     display: flex;
     align-items: center;
-    margin-left: 9vw;
+    margin-left: 19vw;
 }
 
 header div:nth-child(2){
@@ -79,6 +89,10 @@ header div:nth-child(2){
 
 .title img{
     width: 40px;
+}
+
+.title h2{
+    width: 70px;
 }
 
 
@@ -118,7 +132,7 @@ nav > ul > li > a:hover{
 }
 
 footer{
-    width: 70%;
+    width: 100%;
     height: 100px;
     margin:0 auto;
     display: flex;
