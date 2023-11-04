@@ -1242,8 +1242,6 @@ function plusMonthCreateCell(){
         monthsDays[1] = 29
     }
 
-    console.log(maxMonth, lastYear, "확인");
-
     for (let room_id = 0; room_id < splitRooms.length; room_id++){
         for (let month = maxMonth; month < maxMonth+2; month++){
             for (let index = 0; index < indexTime.length; index++){
@@ -1260,7 +1258,6 @@ function plusMonthCreateCell(){
             }
         }
     }
-    console.log(data_group);
     postData(data_group);
 }
 // 윤년판단

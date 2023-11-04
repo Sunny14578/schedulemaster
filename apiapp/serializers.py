@@ -34,7 +34,8 @@ class UserSerializer(serializers.ModelSerializer):
 #         fields = '__all__'  # 모든 필드를 직렬화
     
 class ScheduleSerializer(serializers.ModelSerializer):
+    user_id = serializers.PrimaryKeyRelatedField(source='user_id.id', read_only=True)  # 'user_id' 필드 값을 'User' 객체의 'id'로 설정
 
     class Meta:
         model = ScheduleCell
-        fields = ('schedule_cell', 'cell_content', 'border', 'background_color', 'colspan_st', 'rowspan_st', 'colspan_en', 'rowspan_en', 'year', 'day', 'month', 'time', 'memo_content', 'lecture_room_id')
+        fields = '__all__'

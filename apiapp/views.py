@@ -210,10 +210,11 @@ class ScheduleAPIView(APIView):
         month = request.GET.get('month')
 
         if year and month:
-            print("확인해보자")
-
-        cells = ScheduleCell.objects.all()
+            cells = ScheduleCell.objects.filter(year=year, month=month)
+        else:
+            cells = ScheduleCell.objects.all()
         serializer = ScheduleSerializer(cells, many=True)
+
         return Response(serializer.data)
     
     def post(self, request):

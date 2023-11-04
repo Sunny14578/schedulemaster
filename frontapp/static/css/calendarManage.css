@@ -44,12 +44,16 @@ body{
 .sidebar{
     width: 250px;
     height: 100%;
-    background-color: var(--body--color);
+    background-color: var(--sidebar-color);
+}
+
+i {
+    cursor: pointer;
 }
 
 .main{
     width: 100%;
-    background-color: var(--sidebar-color);
+    background-color: var(--body--color);
 } 
 
 .main-body {
@@ -68,6 +72,10 @@ body{
     justify-content: space-between;
     border-bottom: solid 1px #dee2e6;
     color: var(--primary-color);
+}
+
+.main-header h2{
+    text-align: center;
 }
 
 .main-header div:first-child{
@@ -90,6 +98,79 @@ body{
     background-color: white;
     margin-left: 30vw;
     font-size: 32px;
+}
+
+/* user data tag */
+
+.user-data{
+    display: flex;
+    align-items: center;
+    border-right: solid 1px #dee2e6;
+    border-bottom: solid 1px #dee2e6;
+    height: 32px;
+}
+
+.user-data div{
+    text-align: center;
+}
+
+.user-data > div:first-child{
+    width: 100px;
+    border-right: solid 1px #dee2e6;
+}
+
+.user-lec-tag{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 5px;
+}
+
+.user-lec-tag div{
+    color : var(--sidebar-color);
+    width: 160px;
+    height: 28px;
+    border-radius: 5px;
+    background-color: var(--text-color);
+    margin-right: 5px;
+    font-size: 15px;
+    padding-top: 2px;
+}
+
+.date.hidden {
+    display: none;
+}
+
+.date{
+    width: 220px;
+    height: 80px;
+    background-color: var(--sidebar-color);
+    border-radius: 10px;
+    border: var(--toggle-color) solid 1px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.date > div{
+    /* display: block; */
+    margin-top: 10px;
+}
+
+.date input{
+    width: 178px;
+}
+
+.date button{
+    width: 178px;
+    height: 25px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--sidebar-color);
 }
 
 /* .main-body div div{
