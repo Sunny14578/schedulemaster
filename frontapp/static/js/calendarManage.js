@@ -12,13 +12,23 @@ const mainbody = document.querySelector(".main-contents");
 const calendarIcon = document.querySelector(".bx.bx-calendar");
 const dateModal = document.querySelector(".date");
 const dateSelect = document.querySelector("#dateSelect");
+const navLink = document.querySelectorAll(".nav_link");
 
 window.onload = function(){
     onUserDataGet();
 }
 
+navLink.forEach((li, index) =>{
+    li.addEventListener('click', () => {
+        switch (index) {
+          case 0:
+            onUserDataGet();
+            break;
+        }
+      });
+});
+
 function onUserDataGet(sdate){
-  
     let month;
 
     if(sdate){

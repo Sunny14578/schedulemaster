@@ -31,49 +31,92 @@
 
 body{
     height: 100vh;
+    background-color: var(--body--color);
 }
 
-header{
+.root{
+    display: flex;
+    width: 100%;
+    height: 92.7%;
+}
+
+i {
+    cursor: pointer;
+}
+
+h2{
     text-align: center;
-    margin-bottom: 30px;
-    color: var(--primary-color);
+}
+
+.main{
+    width: 100%;
+    background-color: var(--body--color);
+} 
+
+.header{
+    width: 100%;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-bottom: solid 1px #dee2e6;
+    color: var(--primary-color);
+    margin-bottom: 20px;
 }
 
-header div:first-child{
+.header div:first-child{
     margin-right: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: 24vw;
+    margin-left: 33vw;
 }
 
-header div i{
+.header div i{
     margin: 5px;
+    margin-left: 20px;
 }
 
 /* tools */
 .header-tools{
-    margin-right: 5vw;
+    margin-right: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    font-size: 26px;
+}
+
+.header-tools i{
     font-size: 32px;
 }
 
 
 /* 캘린더 root */
-#calendar{
+/* {
     width: 65vw;
     height: 85vh;
-    position: absolute; /* 위치 지정을 위해 절대 위치로 변경 */
-    top: 50%; /* 화면 상단에서 절반 높이에 위치 */
-    left: 50%; /* 화면 왼쪽에서 절반 너비에 위치 */
-    transform: translate(-50%, -50%); /* 중심을 기준으로 절반만큼 이동하여 가운데 정렬 */
+    position: absolute; 
+    top: 50%;
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+}
+*/
+
+#calendar {
+    height: 95.6%;
+    margin: 20px;
+    background-color:  var(--sidebar-color);
+    border: #dee2e6 1px solid;
+    overflow: auto;
+    display: flex;
+    flex-direction: column; 
+    align-items: center; /
 }
 
-#calendar > div {
+/* #calendar > div {
     position: relative;
-}
+}  */
 
 /* end */
 
@@ -109,13 +152,13 @@ header div i{
 /* day */
 .week-row{
     display: table;
-    height: 13vh;
+    height: 12vh;
     border-collapse: collapse;
 }
 
 .week-row div{
     width: 9vw;
-    height: 13vh;
+    height: 12vh;
     border: 1px solid var(--toggle-color);
     display : table-cell;
     padding-top: 8px;
@@ -136,7 +179,7 @@ header div i{
 
 .week-row > div > div{
     width: 100%;
-    height: 2.5vh;
+    height: 2.2vh;
     background-color: #34DACE;
     display: flex;
     flex-direction: column; /* 수직으로 배치하도록 설정 */
@@ -156,4 +199,92 @@ header div i{
 /* arrow */
 .bx {
     cursor: pointer;
+}
+
+/* sidebar */
+
+.sidebar{
+    width: 250px !important;
+    height: 100%;
+    background-color: var(--sidebar-color);
+}
+
+.sidebar .menu-bar{
+    height: calc(100% - 50px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar li{
+    height: 50px;
+    margin-top: 10px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sidebar li a{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: var(--tran-04);
+}
+
+.sidebar li .icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    font-size: 20px;
+}
+
+.sidebar li a:hover{
+    background-color: var(--primary-color) !important; 
+}
+
+.sidebar div li a:hover .icon,
+.sidebar div li a:hover .text{
+    color: var(--sidebar-color);
+}
+
+/* date popup */
+
+.date.hidden {
+    display: none;
+}
+
+.date{
+    width: 220px;
+    height: 80px;
+    background-color: var(--sidebar-color);
+    border-radius: 10px;
+    border: var(--toggle-color) solid 1px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.date > div{
+    /* display: block; */
+    margin-top: 10px;
+}
+
+.date input{
+    width: 178px;
+}
+
+.date button{
+    width: 178px;
+    height: 25px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--sidebar-color);
 }

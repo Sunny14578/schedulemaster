@@ -4,7 +4,10 @@ const bodyCalendar = document.querySelector(".body-calendar");
 const leftarrow = document.querySelector(".bxs-left-arrow");
 const rightarrow = document.querySelector(".bxs-right-arrow");
 const calendarDate = document.querySelector(".calendarDate");
+const calendarIcon = document.querySelector(".header-tools .bx.bx-calendar");
 const totalhour = document.querySelector(".hour");
+const dateModal = document.querySelector(".date");
+const dateSelect = document.querySelector("#dateSelect");
 
 let yearInfo;
 let monthInfo;
@@ -149,8 +152,8 @@ let currentMonth = currentDate.getMonth();
 let currentDay = currentDate.getDate(); 
 
 function curruntCreateDiv(){
-    const month = parseInt(currentMonth, 10)+1
-    
+    let month = parseInt(currentMonth)+1;
+
     calendarDate.textContent = currentYear +"년 " + month +"월"
 
     const daysInCurrentMonth = getDaysInMonth(currentYear, currentMonth);
@@ -298,6 +301,35 @@ function currentTotalHout(cYear, cMonth){
 
     totalhour.textContent = filteredData.length+"h";
 }
+
+calendarIcon.addEventListener("click", function(event) {
+    dateModal.classList.toggle("hidden");
+
+    const iconRect = calendarIcon.getBoundingClientRect();
+
+    const left = iconRect.right + window.scrollX -160; // 클릭한 요소의 오른쪽
+    const bottom = iconRect.bottom + window.scrollY; // 클릭한 요소의 위
+
+    dateModal.style.left = left + "px";
+    dateModal.style.top = bottom + "px";
+});
+
+dateSelect.addEventListener("click", function(event){
+    const startMonth = document.getElementById("startMonthPicker");
+    var sDate = startMonth.value;
+
+    if(sDate){
+        let y = sDate.split("-")[0];
+        let m = sDate.split("-")[1];
+        
+        currentYear = parseInt(y);
+        currentMonth = parseInt(m)-1;
+    }
+
+    currentTotalHout(currentYear, currentMonth);
+    curruntCreateDiv();
+    dateModal.classList.toggle("hidden");
+});
 
 
 let data = {};

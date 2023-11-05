@@ -105,7 +105,6 @@ i {
 .user-data{
     display: flex;
     align-items: center;
-    border-right: solid 1px #dee2e6;
     border-bottom: solid 1px #dee2e6;
     height: 32px;
 }
@@ -172,6 +171,50 @@ i {
     background-color: var(--primary-color);
     color: var(--sidebar-color);
 }
+
+/* sidebar */
+.sidebar .menu-bar{
+    height: calc(100% - 50px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar li{
+    height: 50px;
+    margin-top: 10px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sidebar li a{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: var(--tran-04);
+}
+
+.sidebar li .icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    font-size: 20px;
+}
+
+.sidebar li a:hover{
+    background-color: var(--primary-color) !important; 
+}
+
+.sidebar div li a:hover .icon,
+.sidebar div li a:hover .text{
+    color: var(--sidebar-color);
+}
+
 
 /* .main-body div div{
     margin-bottom: 3px;

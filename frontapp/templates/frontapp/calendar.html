@@ -2,36 +2,62 @@
 <head>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" type = "text/css" href="{% static 'css/calendar.css' %}">
+    <link rel="stylesheet" type = "text/css" href="{% static 'css/index.css' %}">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
-    <div id="calendar">
-        <header>
-            <div>
-                <i class='bx bxs-left-arrow' style="margin-right: 20px;"></i>
-                <h1 class = 'calendarDate' style="width: 200px; white-space: nowrap;"></h1>
-                
-                <i class='bx bxs-right-arrow' style="margin-left: 20px;"></i>
-            </div>
-            <div class = "header-tools">
-                <span class = "hour" style="
-                font-weight: 600;
-            "></span>
-                <i class='bx bx-calendar'></i>
-            </div>
-        </header>
-        <div>
-            <div class="week-header">
-                <div style="color: red;">일요일</div>
-                <div>월요일</div><div>화요일</div>
-                <div>수요일</div><div>목요일</div>
-                <div>금요일</div><div style="color: blue;">토요일</div>
+    {% include 'frontapp/header.html' %}
+    <div class = "root">
+        <div class = "sidebar">  
+            <div class="menu-bar">
+                <div class="menu">
+                    <ul class="menu-links">       
+                        <li class="nav_link teacher">
+                            <a class="nav a close">
+                                <i class='bx bx-calendar icon'></i>
+                                <span class="text nav-text close">스케줄</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class = "body-calendar">
-        
+        <div class = "main">
+            <div id="calendar">
+                <div class = "header">
+                    <div>
+                        <i class='bx bxs-left-arrow' style="margin-right: 20px;"></i>
+                        <h2 class = 'calendarDate' style="width: 200px; white-space: nowrap;"></h2>
+                        
+                        <i class='bx bxs-right-arrow' style="margin-left: 20px;"></i>
+                    </div>
+                    <div class = "header-tools">
+                        <span class = "hour" style="font-weight: 600;"></span>
+                        <i class='bx bx-calendar'></i>
+                    </div>
+                </div>
+                <div>
+                    <div class="week-header">
+                        <div style="color: red;">일요일</div>
+                        <div>월요일</div><div>화요일</div>
+                        <div>수요일</div><div>목요일</div>
+                        <div>금요일</div><div style="color: blue;">토요일</div>
+                    </div>
+                </div>
+                <div class = "body-calendar">
+                
+                </div>
+            </div>
         </div>
     </div>
-    
+
+    <div class="date hidden" id = "date">
+        <div>
+            <input type="month" id="startMonthPicker" name="startMonth">
+        </div>
+        <button id = "dateSelect">조회</button>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/calendar.js' %}"></script>
 </body>
