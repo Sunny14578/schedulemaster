@@ -34,6 +34,10 @@ body{
     height: 100vh;
     background: var(--body--color);
 }
+
+i{
+    cursor: pointer;
+}
 /* ===== Resuable CSS ===== */
 .sidebar .text{
     font-size: 16px;
@@ -75,6 +79,10 @@ body{
 
 .sidebar2 .menu-links .nav_link a span{
     color: var(--text-color);
+}
+
+.nav-color{
+    pointer-events: none;
 }
 
 
@@ -129,7 +137,7 @@ body{
 }
 
 .sidebar2 li{
-    height: 50px;
+    height: 45px;
     list-style: none;
     display: flex;
     align-items: center;
@@ -223,14 +231,29 @@ header .image-text .header-text{
 
 .sidebar2 header .toggle{
     position: absolute;
-    top: 13%;
+    top: 10%;
     right: 0px;
     height: 25px;
     width: 25px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 25px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.sidebar2 header .bx.bx-edit{
+    top: 40%;
+    right: 2px;
+}
+
+.bx.bx-x.none{
+    display: none;
+}
+
+.bx.bx-x{
+    margin-left: 50px;
+    font-size: 20px;
 }
 
 .sidebar .search-box{
@@ -283,7 +306,8 @@ header .image-text .header-text{
 }
 
 .sidebar2 ul li a:hover .icon,
-.sidebar2 ul li a:hover .text{ 
+.sidebar2 ul li a:hover .text,
+.sidebar2 ul li a:hover .bx-x{ 
     color: var(--sidebar-color) !important;
 }
 

@@ -18,6 +18,7 @@ const body = document.querySelector("body"),
     sidebar22 = body.querySelectorAll(".sidebar2"),
     sidebar22_icon = body.querySelectorAll(".nav_link > a > i"), 
     sidebar22_text = body.querySelectorAll(".nav_link > a > span"),
+    sidebar2_delete = body.querySelectorAll(".nav_link > a > .bx-x"),
     lecture_modal = body.querySelector("#lecture_modal"),
     lecture_add_btn = body.querySelector(".bx.bx-user-plus.toggle.room"),
     lecture_exit = body.querySelector(".exit.room"),
@@ -34,6 +35,7 @@ const body = document.querySelector("body"),
     date_modal = body.querySelector(".date");
     section = body.querySelector(".home");
     menu = body.querySelector(".menu");
+    edit_icon = body.querySelectorAll(".bx.bx-edit");
     
     const undoStack = [];
     let editCells = [];
@@ -942,6 +944,7 @@ function onDataPost() {
             pwInput.value = "";
             pnInput.value = "";
             alert("가입완료");
+            onDataTeacherGet();
 
         } else {
             const labelElement = document.querySelector('label[for="email"]');
@@ -1019,7 +1022,6 @@ if (token) {
 } 
 
 if (userdataCheck.role == 2){
-    console.log(123123);
     section.style.pointerEvents = "none";
     menu.style.pointerEvents = "none";
     // pointer-events: none;
@@ -1051,8 +1053,13 @@ function onDataLectureGet(){
             new_span.className = "text nav-text name";
             new_span.textContent = roomNames[i];
 
+            // var new_i = document.createElement("i");
+            // new_i.className = "bx bx-x none"
+            // new_atag.appendChild(new_i);
+            
             new_litag.appendChild(new_atag);
             new_atag.appendChild(new_span);
+            
             lecture_room_menu.appendChild(new_litag);
         }
     })
@@ -1075,7 +1082,8 @@ function onDataTeacherGet(){
         teacher_menu.innerHTML = '';
         const teacherNames = data.map(item => item.name);
         const colors = data.map(item => item.color)
-
+        const teacherId = data.map(item => item.id);
+    
         const teacherInfo = data.map(item => ({ id: item.id, name: item.name, color: item.color}));
         localStorage.setItem('teacherInfo', JSON.stringify(teacherInfo));
 
@@ -1095,10 +1103,43 @@ function onDataTeacherGet(){
             new_input.type = "color"
             new_input.value = colors[i];
 
-
+            var new_i = document.createElement("i");
+            
+            function createRemoveHandler(index) {
+                return function () {
+                    const clicked_i = this; // 클릭된 요소 (new_i)
+                    const listItem = clicked_i.closest('li');
+                    
+                    if (listItem) {
+                        listItem.remove();
+                    }
+        
+                    const user_id = teacherId[index];
+                    const apiUrl = `/api/usercheck/${user_id}/`;
+        
+                    fetch(apiUrl, {
+                        method: 'delete',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => {
+                        console.log(response);
+                    })
+                    .catch(error => {
+                        console.error('요청 중 오류 발생:', error);
+                    });
+                };
+            }
+            
+            new_i.addEventListener('click', createRemoveHandler(i));
+            new_i.className = "bx bx-x none"
+            
             new_litag.appendChild(new_atag);
             new_atag.appendChild(new_span);
             new_atag.appendChild(new_input);
+            new_atag.appendChild(new_i);
+            
             teacher_menu.appendChild(new_litag);
         }
     })
@@ -1980,6 +2021,54 @@ function onUserUpdateCheck() {
         });
     });
 }
+
+// edit mode
+edit_icon.forEach((icon, index) =>{
+    icon.addEventListener('click', () => {
+        switch (index) {
+          case 0:
+            var new_i = teacher_menu.querySelectorAll(".bx.bx-x");
+            var teacher_menu_color = body.querySelectorAll("#sidebar_teacher .menu-links .nav-color");
+           
+            new_i.forEach((i, index) =>{
+                i.classList.toggle("none");
+            });
+
+            const teacherInfoText = localStorage.getItem("teacherInfo");
+            const teacherInfoTextList = JSON.parse(teacherInfoText);
+
+            teacher_menu_color.forEach((element, index) => {
+                element.style.pointerEvents = 'auto';
+
+                element.addEventListener('change', function() {
+                    var selectedColor = element.value;
+                    const user_id = teacherInfoTextList[index].id
+                    var userData = {
+                        user_id: user_id, 
+                        color: selectedColor.toUpperCase(), 
+                    };
+                
+                    // 서버에 PUT 요청 보내기
+                    fetch(`/api/usercheck/${user_id}/`, {
+                        method: 'put',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(userData),
+                    })
+                    .then(response => {
+                        
+                    })
+                    .catch(error => {
+                        console.error('요청 중 오류 발생:', error);
+                    });
+                });
+            });
+            
+            break;
+        }
+      });
+});
 
 window.onload = function(){
     onDataLectureRoomGet();

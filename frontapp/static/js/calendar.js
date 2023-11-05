@@ -8,6 +8,7 @@ const calendarIcon = document.querySelector(".header-tools .bx.bx-calendar");
 const totalhour = document.querySelector(".hour");
 const dateModal = document.querySelector(".date");
 const dateSelect = document.querySelector("#dateSelect");
+const navLink = document.querySelectorAll(".nav_link");
 
 let yearInfo;
 let monthInfo;
@@ -40,6 +41,16 @@ window.onload = function(){
         curruntCreateDiv(); // 데이터를 가져온 후에 curruntCreateDiv 호출
     });
 }
+
+navLink.forEach((li, index) =>{
+    li.addEventListener('click', () => {
+        switch (index) {
+          case 0:
+            window.location.href = '/calendar';
+            break;
+        }
+      });
+});
 
 let pschedule;
 

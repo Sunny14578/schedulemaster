@@ -12,6 +12,7 @@ urlpatterns = [
     path('schedule/', ScheduleAPIView.as_view()),
     path('schedule/<int:user_id>/', ScheduleByUserAPIView.as_view()),
     path('usercheck/', UserAPIView.as_view()),
+    path('usercheck/<int:user_id>/', UserAPIView.as_view()),
     # path('holiday/', holidayGetAPIView),
     # path('schedule/<int:pk>/', ScheduleAPIView.as_view()),
 ]

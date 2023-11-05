@@ -48,7 +48,6 @@ class JoinApiView(APIView):
             refresh_token = str(token)
             access_token = str(token.access_token)
 
-            print(token, "토큰확인")
             res = Response(
                 {
                     "user": serializer.data,
@@ -133,8 +132,6 @@ class AuthAPIView(APIView):
             return Response({
                 "message" : 0
             })
-        
-  
 
     # 로그아웃
     def delete(self, request):
@@ -155,20 +152,40 @@ class UserAPIView(APIView):
         except:
             return Response({'message': '사용자를 찾을 수 없음'}, status=404)
 
-    def put(self, request):
-        try:
-            userData = User.objects.all()
-            
-            if userData[0].updateCheck == 1:
-                updateDate = 0
-            else:
-                updateDate = 1
+    def put(self, request, user_id=None):
+        if user_id is None:
+            try:
+                userData = User.objects.all()
+                
+                if userData[0].updateCheck == 1:
+                    updateDate = 0
+                else:
+                    updateDate = 1
 
-            User.objects.update(updateCheck=updateDate)
+                User.objects.update(updateCheck=updateDate)
         
-            return Response({'message': updateDate})
+                return Response({'message': updateDate})
+            except User.DoesNotExist:
+                return Response({'message': '사용자를 찾을 수 없음'}, status=404)
+        else:
+            try:
+                user = User.objects.get(id=user_id)
+                
+                new_color = request.data.get('color')  
+            
+                user.color = new_color  
+                user.save() 
+                return Response({'message': 'Color 및 updateCheck 업데이트 완료'})
+            except User.DoesNotExist:
+                return Response({'message': '사용자를 찾을 수 없음'}, status=status.HTTP_404_NOT_FOUND)
+        
+    def delete(self, request, user_id):
+        try:
+            user_to_delete = User.objects.get(id=user_id)
+            user_to_delete.delete()
+            return Response({'message': '사용자가 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
         except User.DoesNotExist:
-            return Response({'message': '사용자를 찾을 수 없음'}, status=404)
+            return Response({'message': '사용자를 찾을 수 없음'}, status=status.HTTP_404_NOT_FOUND)
 
 ### 기업생성
 
