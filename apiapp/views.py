@@ -218,6 +218,27 @@ class LectureAPIView(APIView):
             serializer.save()
             return Response({"message": 1, "data" : serializer.data}, status=status.HTTP_201_CREATED)
         return Response({"message": 0}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request, room_id):
+        try:
+            room_to_update = LectureRoom.objects.get(room_id=room_id)
+            new_room_name = request.data.get('room_name')  # 요청 데이터에서 새로운 room_name을 가져옴
+            room_to_update.room_name = new_room_name  # room_name 필드를 업데이트
+            room_to_update.save()  # 변경사항 저장
+          
+            return Response({'message': '강의장 정보가 업데이트되었습니다.'})
+        except LectureRoom.DoesNotExist:
+            return Response({'message': '강의장을 찾을 수 없음'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    def delete(self, request, room_id):
+        try:
+            room_to_delete = LectureRoom.objects.get(room_id=room_id)
+            room_to_delete.delete()
+            return Response({'message': '강의장이 삭제되었습니다.'}, status=status.HTTP_204_NO_CONTENT)
+        except LectureRoom.DoesNotExist:
+            return Response({'message': '강의장을 찾을 수 없음'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class ScheduleAPIView(APIView):

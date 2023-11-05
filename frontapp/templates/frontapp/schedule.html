@@ -85,6 +85,7 @@
             </div>
 
             <i class='bx bx-user-plus toggle room'></i>
+            <i class='bx bx-edit toggle'></i>
         </header>
         <ul class="menu-links">
         </ul>
@@ -160,6 +161,19 @@
             </div>
             <div class="btn_area">
                 <button type="submit" onclick="onDataLecturePost()">등록</button>
+            </div>
+        </section>
+    </div>
+
+    <div class="modal hidden" id = "lecture_update_modal">
+        <section class="login_form">
+            <i class='bx bx-x-circle exit updateRoom'></i>
+            <div class="int_area">
+                <input type="text" name="room" id="room_name2" autocomplete="off" required></input>
+                <label for="room_name2" class="{showWarning ? 'warning' : ''}">변경할 이름</label>
+            </div>
+            <div class="btn_area">
+                <button type="submit" onclick="onDataLectureUpdate()">변경하기</button>
             </div>
         </section>
     </div>

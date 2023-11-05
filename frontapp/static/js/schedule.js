@@ -36,6 +36,9 @@ const body = document.querySelector("body"),
     section = body.querySelector(".home");
     menu = body.querySelector(".menu");
     edit_icon = body.querySelectorAll(".bx.bx-edit");
+
+    lecture_update_modal = body.querySelector("#lecture_update_modal");
+    exit_update_room = body.querySelector(".updateRoom");
     
     const undoStack = [];
     let editCells = [];
@@ -46,6 +49,10 @@ const body = document.querySelector("body"),
     document.body.addEventListener("contextmenu", (event) => {
         event.preventDefault(); // 기본 컨텍스트 메뉴를 표시하지 않음
         onDataTeacherGet();
+    });
+
+    exit_update_room.addEventListener("click", (event) => {
+        lecture_update_modal.classList.toggle("hidden");
     });
 
     // 실행취소
@@ -999,7 +1006,7 @@ async function onDataLecturePost() {
         
         if (responseData.message) {
             roomInput.value = "";
-          
+            onDataLectureGet();
             onCreateCell(responseData.data.room_id);
            
         } else {
@@ -1027,6 +1034,7 @@ if (userdataCheck.role == 2){
     // pointer-events: none;
 }
 
+let l_room_id = 0
 
 function onDataLectureGet(){
     const apiUrl = '/api/lecture/';
@@ -1041,6 +1049,7 @@ function onDataLectureGet(){
     .then(data => {
         lecture_room_menu.innerHTML = '';
         const roomNames = data.map(item => item.room_name);
+        const roomIds = data.map(item => item.room_id);
 
         for (var i=0; i<roomNames.length; i++){
             var new_litag = document.createElement("li");
@@ -1050,15 +1059,57 @@ function onDataLectureGet(){
             new_atag.className = "nav a close";
 
             var new_span = document.createElement("span");
+
+            function updateHandler(index) {
+                return function () {
+                    lecture_update_modal.classList.toggle("hidden");
+                    l_room_id = roomIds[index];
+                };
+            }
+
+            new_span.addEventListener('click', updateHandler(i));
+
+
             new_span.className = "text nav-text name";
             new_span.textContent = roomNames[i];
 
-            // var new_i = document.createElement("i");
-            // new_i.className = "bx bx-x none"
-            // new_atag.appendChild(new_i);
+            var new_i = document.createElement("i");
+
+            function createRemoveHandler(index) {
+                return function () {
+                    const clicked_i = this; // 클릭된 요소 (new_i)
+                    const listItem = clicked_i.closest('li');
+                    
+                    if (listItem) {
+                        listItem.remove();
+                    }
+        
+                    const room_id = roomIds[index];
+                    const apiUrl = `/api/lecture/${room_id}/`;
+        
+                    fetch(apiUrl, {
+                        method: 'delete',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                    .then(response => {
+                        onDataLectureRoomGet();
+                        onDataCellGet();
+                    })
+                    .catch(error => {
+                        console.error('요청 중 오류 발생:', error);
+                    });
+                };
+            }
+
+            new_i.addEventListener('click', createRemoveHandler(i));
+
+            new_i.className = "bx bx-x none"
             
-            new_litag.appendChild(new_atag);
             new_atag.appendChild(new_span);
+            new_atag.appendChild(new_i);
+            new_litag.appendChild(new_atag);
             
             lecture_room_menu.appendChild(new_litag);
         }
@@ -1066,6 +1117,28 @@ function onDataLectureGet(){
     .catch(error => {
         console.error('에러 발생:', error);
     });
+}
+
+function onDataLectureUpdate(){
+    const roomName = document.getElementById('room_name2').value;
+    
+    fetch(`/api/lecture/${l_room_id}/`, {
+        method: 'put',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ room_name: roomName }), // 업데이트할 데이터를 JSON 형식으로 전송
+    })
+        .then(response => response.json())
+        .then(data => {
+            onDataLectureGet(); // 성공한 경우 응답 데이터 출력
+            onDataLectureRoomGet();
+            lecture_update_modal.classList.toggle("hidden");
+        })
+        .catch(error => {
+            console.error('요청 중 오류 발생:', error); // 오류 처리
+        });
+    
 }
 
 function onDataTeacherGet(){
@@ -1245,8 +1318,6 @@ async function postData(dataList) {
             body: JSON.stringify(dataList), 
         });
 
-        console.log(response);
-
         if (response.ok) {
             const responseData = await response.json();
             onDataCellGet();
@@ -1329,7 +1400,7 @@ let dateCheck = 0
 
 function onDataCellGet(sDate, eDate){
     return new Promise((resolve, reject) => {
-
+    
     const apiUrl = '/api/schedule/';
     
     let sYear;
@@ -2066,6 +2137,13 @@ edit_icon.forEach((icon, index) =>{
             });
             
             break;
+            case 1:
+                var new_i = lecture_room_menu.querySelectorAll(".bx.bx-x");
+                
+                new_i.forEach((i, index) =>{
+                    i.classList.toggle("none");
+                });
+                break
         }
       });
 });

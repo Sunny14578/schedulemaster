@@ -562,6 +562,12 @@ div.modal.hidden{
     height:250px !important;
 }
 
+#lecture_update_modal{
+    width:400px;
+    height:250px !important;
+}
+
+
 #border_modal{
     width:220px !important; 
     height:50px !important;

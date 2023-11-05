@@ -9,6 +9,7 @@ urlpatterns = [
     path('logout/', AuthAPIView.as_view()),
     path('join/company/', Create_Company, name='Create_Company'),
     path('lecture/', LectureAPIView.as_view()),
+    path('lecture/<int:room_id>/', LectureAPIView.as_view()),
     path('schedule/', ScheduleAPIView.as_view()),
     path('schedule/<int:user_id>/', ScheduleByUserAPIView.as_view()),
     path('usercheck/', UserAPIView.as_view()),
