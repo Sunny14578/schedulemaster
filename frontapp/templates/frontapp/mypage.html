@@ -1,0 +1,35 @@
+{% load static %}
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" type = "text/css" href="{% static 'css/calendar.css' %}">
+    <link rel="stylesheet" type = "text/css" href="{% static 'css/index.css' %}">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    {% include 'frontapp/header.html' %}
+    <div class="main">
+        <div>
+            <h1>마이 페이지</h1>
+            <form>
+                <label for="email">이메일:</label>
+                <input type="text" id="email" name="email" value="user@example.com"><br><br>
+        
+                <label for="name">이름:</label>
+                <input type="text" id="name" name="name" value="사용자 이름"><br><br>
+        
+                <label for="phone">전화번호:</label>
+                <input type="text" id="phone" name="phone" value="010-1234-5678"><br><br>
+        
+                <label for="newPassword">새 비밀번호:</label>
+                <input type="password" id="newPassword" name="newPassword"><br><br>
+        
+                <label for="confirmPassword">비밀번호 확인:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword"><br><br>
+        
+                <input type="submit" value="비밀번호 변경">
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>

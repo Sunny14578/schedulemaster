@@ -424,7 +424,7 @@ table td:hover{
 }
 
 .lecture_room{
-    margin-top: 45px;
+    margin-top: 41px;
     margin-right: 5px;
 }
 
@@ -443,7 +443,7 @@ table td:hover{
 }
 
 .lecture_room li:nth-child(even){
-    margin-bottom: 45px;
+    margin-bottom: 41px;
 }
 
 table thead tr:nth-child(1) td{
@@ -566,7 +566,6 @@ div.modal.hidden{
     width:400px;
     height:250px !important;
 }
-
 
 #border_modal{
     width:220px !important; 
@@ -870,6 +869,8 @@ div.modal.hidden{
 }
 
 .bx.bx-log-out.icon,
+.bx.bx-objects-horizontal-left.icon,  
+.text.nav-text.totalHour,
 .text.nav-text.logout{
     color: var(--text-color);
     cursor: pointer;

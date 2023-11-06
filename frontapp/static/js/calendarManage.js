@@ -15,6 +15,17 @@ const dateSelect = document.querySelector("#dateSelect");
 const navLink = document.querySelectorAll(".nav_link");
 
 window.onload = function(){
+    const token = localStorage.getItem('authToken');
+    
+    let userdata = 1;
+    
+    if (token) {
+            userdata = JSON.parse(localStorage.getItem('user'));
+    } 
+    
+    if(userdata.role != 1){
+        window.location.href = '/calendar';
+    }
     onUserDataGet();
 }
 

@@ -681,7 +681,6 @@ const body = document.querySelector("body"),
                 // modifiedTdIds.push(tdId);
             }
         });
-            console.log(clickedElement.style.backgroundColor, "확인해보자");
             clickedElement.style.border = "2px solid #695CFE";
             selectedTd = clickedElement;
             selectedTdsColor.push(selectedTd);
@@ -950,7 +949,6 @@ function onDataPost() {
             nameInput.value = "";
             pwInput.value = "";
             pnInput.value = "";
-            alert("가입완료");
             onDataTeacherGet();
 
         } else {
@@ -1035,6 +1033,7 @@ if (userdataCheck.role == 2){
 }
 
 let l_room_id = 0
+let room_edit_check = 0;
 
 function onDataLectureGet(){
     const apiUrl = '/api/lecture/';
@@ -1059,16 +1058,6 @@ function onDataLectureGet(){
             new_atag.className = "nav a close";
 
             var new_span = document.createElement("span");
-
-            function updateHandler(index) {
-                return function () {
-                    lecture_update_modal.classList.toggle("hidden");
-                    l_room_id = roomIds[index];
-                };
-            }
-
-            new_span.addEventListener('click', updateHandler(i));
-
 
             new_span.className = "text nav-text name";
             new_span.textContent = roomNames[i];
@@ -1133,7 +1122,7 @@ function onDataLectureUpdate(){
         .then(data => {
             onDataLectureGet(); // 성공한 경우 응답 데이터 출력
             onDataLectureRoomGet();
-            lecture_update_modal.classList.toggle("hidden");
+            
         })
         .catch(error => {
             console.error('요청 중 오류 발생:', error); // 오류 처리
@@ -1407,9 +1396,8 @@ function onDataCellGet(sDate, eDate){
     let sMonth;
     let eYear;
     let eMonth;
-    
+    let totalDays;
     let monthList = []
-    let totalDays = 0;
     dateCheck = 0
 
     if (sDate && eDate){
@@ -1441,13 +1429,12 @@ function onDataCellGet(sDate, eDate){
         type: 'GET',
         dataType:'json',
         success: function (data){
-
         table.innerHTML = '';
         var monthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         
         const rooms = localStorage.getItem('roomIdNames');
         const splitRooms = JSON.parse(rooms);
-
+    
         const currentDate = new Date(); 
         let currentYear = currentDate.getFullYear(); 
         let currentMonth = currentDate.getMonth();
@@ -1486,12 +1473,15 @@ function onDataCellGet(sDate, eDate){
         }
        
         let thead;
+        
 
         for (let i = 0; i < splitRooms.length; i++){
             const FilterData = data.filter(item => item.lecture_room_id == splitRooms[i]);
           
             if (FilterData.length > 0){ 
                 if (i%2==0){
+                    totalDays = 0;
+
                     thead = document.createElement('thead');
                     
                     const FilterRowData = FilterData.filter(item => item.time == indexTime[0]);
@@ -1551,7 +1541,6 @@ function onDataCellGet(sDate, eDate){
                  
                         for (let mm = minMonth2; mm < monthRange+1; mm++){
                             const monthIndex = mm > 12 ? mm - 12 : mm;
-                            
                             const FilteMonthData = FilterYearData.filter(item => item.month == monthIndex)
                             
                             for (let j = 0; j < monthsDays[monthIndex-1]; j++){
@@ -1633,7 +1622,7 @@ function onDataCellGet(sDate, eDate){
                     if (dateCheck){
                         cols = totalDays;
                     }
-                    
+                   
                     for (let j = 0; j < cols; j++){
                         const td = document.createElement('td');
                         td.setAttribute('id', FilterYearMonthData[j].schedule_cell+"td");
@@ -2012,6 +2001,22 @@ function onLogout() {
     });
 }
 
+function onTotalPage(){
+    const token = localStorage.getItem('authToken');
+    
+    let userdata = 1;
+    
+    if (token) {
+            userdata = JSON.parse(localStorage.getItem('user'));
+    } 
+    
+    if(userdata.role == 1){
+        window.location.href = '/calendarManage';
+    }else{
+        window.location.href = '/calendar';
+    }
+}
+
 const checkIcon = body.querySelector(".bx.bx-check.icon");
 
 
@@ -2138,11 +2143,30 @@ edit_icon.forEach((icon, index) =>{
             
             break;
             case 1:
+              
+                const rIn = localStorage.getItem('roomIdNames');
+                const f_rIn = JSON.parse(rIn);
+
+                var span = lecture_room_menu.querySelectorAll(".text.nav-text.name");
+                span.forEach((s, index) =>{
+                    
+                    function updateHandler(index) {
+                        return function () {
+                            lecture_update_modal.classList.toggle("hidden");
+                            l_room_id = f_rIn[index];
+                        };
+                    }
+        
+                    s.addEventListener('click', updateHandler(index));
+                });
+
                 var new_i = lecture_room_menu.querySelectorAll(".bx.bx-x");
                 
                 new_i.forEach((i, index) =>{
                     i.classList.toggle("none");
                 });
+
+                room_edit_check = 1;
                 break
         }
       });
