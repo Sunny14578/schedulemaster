@@ -60,11 +60,14 @@ const body = document.querySelector("body"),
     
         if (event.ctrlKey && event.key == "z" || event.ctrlKey && event.key == "Z") {
             event.preventDefault();
+        
             const preState = undoStack.pop();
             const postState = postEditCells.pop();
+            
 
             if (preState){
                 preState.forEach((cell, index) =>{
+                    console.log(cell);
                     cell.classList.remove('selected');
                     cell.style.filter = 'none'
                     postState[index].replaceWith(cell);
@@ -597,13 +600,20 @@ const body = document.querySelector("body"),
 
     function teacherAddMouseDown(event){
         const clickedElement = event.target
+        const clonedCell = clickedElement.cloneNode(true); // 선택한 셀을 복사
+        preEditCells.push(clonedCell);
+
         if (clickedElement.tagName == "TD" && teacher_check && event.button === 0){
             clickedElement.style.backgroundColor = teacher_color;
 
             if (!editCells.includes(clickedElement)) {
                 editCells.push(clickedElement);
             }
-            console.log(editCells);
+    
+            undoStack.push(preEditCells);
+            postEditCells.push([clickedElement]);
+            
+            preEditCells = [];
         }
     }
 
@@ -661,13 +671,7 @@ const body = document.querySelector("body"),
             // 엔터 키를 누르면 편집 모드를 끝내고 값을 적용
             if (!editCells.includes(clickedElement)) {
                 editCells.push(clickedElement);
-                // if (event.ctrlKey && event.key == "s" || event.ctrlKey && event.key == "S") {
-                //     event.preventDefault();
-                //     console.log(12312312);
-                // }else{
-                    
-                //     console.log("들어가니?");
-                // }
+               
             }
 
             if (event.key === "Enter" && event.shiftKey) {
@@ -678,7 +682,6 @@ const body = document.querySelector("body"),
             if (event.key === "Enter"){
                 event.preventDefault(); // 엔터 키의 기본 동작 방지
                 clickedElement.contentEditable = false; // 편집 모드 종료
-                // modifiedTdIds.push(tdId);
             }
         });
             clickedElement.style.border = "2px solid #695CFE";
@@ -706,7 +709,7 @@ const body = document.querySelector("body"),
     table.addEventListener("mousedown", (event) => {
         selectedTdsColor = []
         deselectTds();
-        console.log(selectedTds);
+    
         const clickedElement = event.target
         clearTimeout(mouseDownTimer);
         event.preventDefault();
@@ -751,7 +754,7 @@ const body = document.querySelector("body"),
                 const tdIndex = Array.from(clickedElement.parentElement.children).indexOf(clickedElement);
                 endRowIndex = clickedElement.parentElement.rowIndex;
                 endColIndex = tdIndex;  
-            
+                
                 selectTds();
             }
         }
@@ -762,10 +765,11 @@ const body = document.querySelector("body"),
     });
 
     function selectTds() {
-       
+        // hi
         if (teacher_color){
             selectedTds.forEach((td) => {
                 td.style.backgroundColor = teacher_color;
+
                 if (!editCells.includes(td)) {
                     editCells.push(td);
                 }
@@ -778,10 +782,12 @@ const body = document.querySelector("body"),
               const row = table.rows[i];
               for (let j = Math.min(startColIndex, endColIndex); j <= Math.max(startColIndex, endColIndex); j++) {
                 const td = row.cells[j];
+
                 selectedTds.push(td);
-                td.style.backgroundColor = teacher_color;
+                // td.style.backgroundColor = teacher_color;
               }
             }
+            // console.log(postEditCells);
         }else{
             selectedTds.forEach((td) => {
                 td.classList.toggle("selected");
