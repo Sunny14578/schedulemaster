@@ -43,6 +43,9 @@
     box-sizing: border-box;
 }
 
+body{
+    height: 100vh;
+}
 
 header{
     width: 100%;
@@ -67,8 +70,6 @@ header div:nth-child(2) {
 header nav ul:first-child{
     margin-left: 15vw;
 }
-
-
 
 header h2 a{
     color : black;
@@ -131,15 +132,62 @@ nav > ul > li > a:hover{
     cursor: default;
 }
 
-footer{
+.mainpage{
+    height: 100%;
+}
+
+.introduce{
+    background-color: var(--body--color);
+    height: 30%;
+    margin-bottom: 80px;
+}
+
+.introduce > div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+img{
     width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.video-body{
+    height: 70%;
+    margin-bottom: 50px;
+}
+
+.video-row{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-row > div{
+    margin-bottom: 50px;
+}
+
+.video-row > div:first-child{
+    margin-right: 100px;
+}
+
+h4{
+    text-align: center;
+}
+
+footer{
+    /* width: 100%; */
     height: 100px;
     margin:0 auto;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     border-top-color: #dee2e6;
     border-top-style: solid;
     border-block-width: 1px;
-    /* align-item 영역의 수직방향 중앙에 위치시킨다. */
 }

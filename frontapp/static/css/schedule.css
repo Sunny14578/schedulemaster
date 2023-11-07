@@ -471,9 +471,11 @@ table tbody td{
     height: 18px !important;
     min-width: 18px;
     min-height: 18px;
+    max-width: 18px;
+    max-height: 18px;
     overflow: visible;
     white-space: nowrap;
-    font-size:10px;
+    font-size:12px;
     max-width: 18px;
     font-weight: bold;
 }

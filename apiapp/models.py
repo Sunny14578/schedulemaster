@@ -83,6 +83,7 @@ class ScheduleCell(models.Model):
     cell_content = models.TextField(default="") # 셀 내용
     border = models.CharField(default="1px solid #DDD", max_length=255) # 테두리 (예: 테두리 스타일, 두께 등)
     background_color = models.CharField(default="white", max_length=255) # 배경색
+    color = models.CharField(default="#0000000", max_length=10)
     colspan_st = models.IntegerField(default=1) # 셀 합치기 값 (예: colspan, rowspan)
     rowspan_st = models.IntegerField(default=1)
     colspan_en = models.IntegerField(default=1)

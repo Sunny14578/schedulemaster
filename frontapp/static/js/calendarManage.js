@@ -3,7 +3,7 @@ let currentYear = currentDate.getFullYear();
 let currentMonth = currentDate.getMonth(); 
 let currentDay = currentDate.getDate(); 
 
-var bgcolor = ["#003399", "#FF5E00", "#22741C", "#5D5D5D", "#664B00", "#5F00FF", "#003399", "#FF5E00", "#22741C", "#F15F5F", "#D941C5", "#5F00FF"];
+var bgcolor = ["#7FC4FF", "#86D788", "#AA9BFF", "#FFCA7A", "#FF8F8E", "#34DACE", "#F18BCA", "#7FC4FF", "#86D788", "#AA9BFF", "#FFCA7A", "#FF8F8E", "#34DACE", "#F18BCA", "#7FC4FF", "#86D788", "#AA9BFF", "#FFCA7A", "#FF8F8E", "#34DACE", "#F18BCA", "#7FC4FF", "#86D788", "#AA9BFF", "#FFCA7A", "#FF8F8E", "#34DACE", "#F18BCA"];
 
 const leftarrow = document.querySelector(".bxs-left-arrow");
 const rightarrow = document.querySelector(".bxs-right-arrow");
@@ -72,7 +72,6 @@ function onUserDataGet(sdate){
         type: 'GET',
         dataType:'json',
         success: function (data){
-            console.log(data);
             while (mainbody.firstChild) {
                 mainbody.removeChild(mainbody.firstChild);
             }
@@ -98,6 +97,7 @@ function onUserDataGet(sdate){
                 userLecTagDiv.classList.add('user-lec-tag');
 
                 rIn_info.forEach((rI, index) =>{
+                    console.log(bgcolor[index]);
                     const lecture_data = filteredData.filter(item => item.lecture_room_id == rI);
 
                     if (lecture_data.length){
@@ -106,9 +106,7 @@ function onUserDataGet(sdate){
 
                         userLecTagDiv.appendChild(lectureTag);
 
-
-
-                        lectureTag.style.backgroundColor = bgcolor[index%12];
+                        lectureTag.style.backgroundColor = bgcolor[index];
                     };
                 })
 

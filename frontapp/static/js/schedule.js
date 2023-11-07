@@ -1629,6 +1629,7 @@ function onDataCellGet(sDate, eDate){
                         const cellContent = FilterYearMonthData[j].cell_content;
                         const border = FilterYearMonthData[j].border;
                         const boder_list = border.split(';');
+                        const color = FilterYearMonthData[j].color;
                      
                         let backgroundColor = FilterYearMonthData[j].background_color;
                       
@@ -1637,7 +1638,8 @@ function onDataCellGet(sDate, eDate){
                         td.style.borderRight = boder_list[1];
                         td.style.borderBottom = boder_list[2];
                         td.style.borderLeft = boder_list[3];
-                        
+                        td.style.color = color;
+                       
                         if (backgroundColor != 'white'){
                             td.style.backgroundColor = backgroundColor;
                         }
@@ -1833,6 +1835,7 @@ function onDataUserCellGet(updateCheck){
                         const cellContent = FilterYearMonthData[j].cell_content;
                         const border = FilterYearMonthData[j].border;
                         const boder_list = border.split(';');
+                        const color = FilterYearMonthData[j].color;
                      
                         let backgroundColor = FilterYearMonthData[j].background_color;
                       
@@ -1841,6 +1844,7 @@ function onDataUserCellGet(updateCheck){
                         td.style.borderRight = boder_list[1];
                         td.style.borderBottom = boder_list[2];
                         td.style.borderLeft = boder_list[3];
+                        td.style.color = color;
                         
                         if (backgroundColor != 'white'){
                             td.style.backgroundColor = backgroundColor;
@@ -1897,6 +1901,8 @@ function onUpdateCell(){
         const borderBottom = computedStyle.borderBottom;
         const borderRight = computedStyle.borderRight;
         const borderLeft = computedStyle.borderLeft;
+        
+        const color = computedStyle.color;
 
         combinedBorder = `${borderTop};${borderRight};${borderBottom};${borderLeft}`;
 
@@ -1909,7 +1915,8 @@ function onUpdateCell(){
             "pk":modiPk,
             "cell_content":textContent,
             "border":combinedBorder,
-            "background_color":backgroundColor
+            "background_color":backgroundColor,
+            "color":color
         }
         if (data_group.length === 0 || data.pk > data_group[data_group.length - 1].pk) {
             data_group.push(data);

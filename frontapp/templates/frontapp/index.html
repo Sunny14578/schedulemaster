@@ -2,33 +2,39 @@
 {% load static %} 
 {% block content %}
 <div class = "mainpage">
-    <div>
-        <div>
-            <video width="320" height="240" controls>
-                <source src="{% static 'video/teacher.mp4' %}" type="video/mp4">
-                강사 관련 기능 소개
-            </video>
+    <div class = "introduce">  
+        <div> 배너 준비중입니다. </div>
+    </div>
+    <div class = "video-body">
+        <div class = "video-row">
+            <div>
+                <h4> 강사 관련 기능 소개 </h4>
+                <video width="400" height="280" controls>
+                    <source src="{% static 'video/teacher.mp4' %}" type="video/mp4">
+                </video>
+            </div>
+            <div>
+                <h4> 강의장 관련 기능 소개 </h4>
+                <video width="400" height="280" controls>
+                    <source src="{% static 'video/room.mp4' %}" type="video/mp4">
+                </video>
+            </div>
         </div>
-        <div>
-            <video width="320" height="240" controls>
-                <source src="{% static 'video/room.mp4' %}" type="video/mp4">
-                강의장 관련 기능 소개
-            </video>
+        <div class = "video-row">
+            <div>
+                <h4> 스케줄 배정 기능 소개 </h4>
+                <video width="400" height="280" controls>
+                    <source src="{% static 'video/schedule.mp4' %}" type="video/mp4">
+                </video>
+            </div>
+            <div>
+                <h4> 셀 도구 소개 </h4>
+                <video width="400" height="280" controls>
+                    <source src="{% static 'video/celltool.mp4' %}" type="video/mp4">
+                </video>
+            </div>
         </div>
     </div>
-    <div>
-        <div>
-            <video width="320" height="240" controls>
-                <source src="{% static 'video/schedule.mp4' %}" type="video/mp4">
-                스케줄 배정 기능 소개
-            </video>
-        </div>
-        <div>
-            <video width="320" height="240" controls>
-                <source src="{% static 'video/celltool.mp4' %}" type="video/mp4">
-                셀 도구 소개
-            </video>
-        </div>
-    </div>
+    {% include 'frontapp/footer.html' %}
 </div>
 {% endblock %}

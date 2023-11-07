@@ -308,8 +308,10 @@ class ScheduleAPIView(APIView):
                 cell.cell_content = item["cell_content"]
                 cell.border = item["border"]
                 cell.background_color = item["background_color"]
+                cell.color = rgb_to_hex(item["color"])
+          
 
-            ScheduleCell.objects.bulk_update(schedule_cells_to_update, ["cell_content", "border", "background_color", "user_id"])
+            ScheduleCell.objects.bulk_update(schedule_cells_to_update, ["cell_content", "border", "background_color", "user_id", "color"])
             return Response({"message": 1}, status=status.HTTP_200_OK)
         
         except Exception as e:
