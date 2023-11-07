@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;700&display=swap');
 
-*{
-    font-family: 'Poppins', sans-serif;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+@font-face {
+    font-family: 'S-CoreDream-3Light';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
 
 :root{
@@ -23,9 +23,20 @@
     --tran-05: all 0.5s ease;
 }
 
+*{
+    font-family: 'S-CoreDream-3Light', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body{
     height: 100vh;
     background: var(--body--color);
+}
+
+i{
+    cursor: pointer;
 }
 /* ===== Resuable CSS ===== */
 .sidebar .text{
@@ -63,11 +74,16 @@ body{
 }
 
 .sidebar2 .menu-links .nav.a .text.nav-text{
+    width: 40px;
     margin-right: 15px;
 } 
 
 .sidebar2 .menu-links .nav_link a span{
     color: var(--text-color);
+}
+
+.nav-color{
+    pointer-events: none;
 }
 
 
@@ -122,7 +138,7 @@ body{
 }
 
 .sidebar2 li{
-    height: 50px;
+    height: 45px;
     list-style: none;
     display: flex;
     align-items: center;
@@ -216,14 +232,29 @@ header .image-text .header-text{
 
 .sidebar2 header .toggle{
     position: absolute;
-    top: 13%;
+    top: 10%;
     right: 0px;
     height: 25px;
     width: 25px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 25px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.sidebar2 header .bx.bx-edit{
+    top: 40%;
+    right: 2px;
+}
+
+.bx.bx-x.none{
+    display: none;
+}
+
+.bx.bx-x{
+    margin-left: 50px;
+    font-size: 20px;
 }
 
 .sidebar .search-box{
@@ -276,7 +307,8 @@ header .image-text .header-text{
 }
 
 .sidebar2 ul li a:hover .icon,
-.sidebar2 ul li a:hover .text{ 
+.sidebar2 ul li a:hover .text,
+.sidebar2 ul li a:hover .bx-x{ 
     color: var(--sidebar-color) !important;
 }
 
@@ -318,11 +350,20 @@ header .image-text .header-text{
     align-items: center;
 }
 
+.quick-menu > div{
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    height: 24px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+
 .quick-menu .icon{
-    width: 30px;
-    height: 30px;
-    font-size: 30px;
-    margin-right: 20px;
+    font-size: 25px;
+    margin-right: 5px;
+    margin-left: 5px;
 }
 
 .quick-menu .icon.border{
@@ -334,6 +375,8 @@ header .image-text .header-text{
     width: 20px;
     height: 20px;
     font-size: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
 }
 
 .sidebar.close ~ .home{
@@ -368,7 +411,7 @@ table{
 }
 
 table td:hover{
-    background-color: var(--body--color);
+    box-shadow: 0 0 4px rgba(105, 92, 254, 1);
     cursor: default;
 }
 
@@ -382,7 +425,7 @@ table td:hover{
 }
 
 .lecture_room{
-    margin-top: 45px;
+    margin-top: 41px;
     margin-right: 5px;
 }
 
@@ -401,7 +444,7 @@ table td:hover{
 }
 
 .lecture_room li:nth-child(even){
-    margin-bottom: 45px;
+    margin-bottom: 41px;
 }
 
 table thead tr:nth-child(1) td{
@@ -429,15 +472,17 @@ table tbody td{
     height: 18px !important;
     min-width: 18px;
     min-height: 18px;
+    max-width: 18px;
+    max-height: 18px;
     overflow: visible;
     white-space: nowrap;
-    font-size:10px;
+    font-size:12px;
     max-width: 18px;
     font-weight: bold;
 }
 
 td.selected{
-    background-color: var(--body--color);
+    box-shadow: 0 0 1.5px rgba(105, 92, 254, 1);
 }
 
 
@@ -446,9 +491,36 @@ td.selected{
 }
 
 /* quick menu */
+
+
 .quick-menu i.icon:hover{
     cursor: pointer;
     background-color: var(--body--color);
+    color: black;
+}
+
+.quick-menu i.icon{
+    color: gray;
+}
+
+.merge{
+    width: 27px !important; 
+    height: 27px !important;
+    background-image: url("../imges/mergeicon22.png"); 
+    background-size: cover
+}
+
+.merge:hover{
+    background-image: url("../imges/mergeicon.png"); 
+    cursor: pointer;
+    background-color: var(--body--color);
+}
+
+#quick-menu-hover{
+    border-radius: 0px;
+    width: 80px;
+    height: 20px;
+    font-size: 10px;
 }
 
 /* modal */
@@ -479,7 +551,7 @@ div.modal.hidden{
     height:100%;
     background-size: cover;
     overflow:overlay;
-    font-family: 'SUITE-Regular', sans-serif;
+    /* font-family: 'SUITE-Regular', sans-serif; */
     border-radius: 10px;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
 }
@@ -489,6 +561,11 @@ div.modal.hidden{
 }
 
 #lecture_modal{
+    width:400px;
+    height:250px !important;
+}
+
+#lecture_update_modal{
     width:400px;
     height:250px !important;
 }
@@ -582,6 +659,39 @@ div.modal.hidden{
     position: absolute;
 }
 /*  */
+
+/* date popup */
+.date.hidden {
+    display: none;
+}
+
+.date{
+    width: 200px;
+    height: 115px;
+    background-color: var(--sidebar-color);
+    border-radius: 10px;
+    border: var(--toggle-color) solid 1px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.date > div{
+    /* display: block; */
+    margin-top: 10px;
+}
+
+.date button{
+    width: 90%;
+    height: 25px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--sidebar-color);
+}
 
 /* background color modal */
 .background_modal.hidden{
@@ -762,6 +872,9 @@ div.modal.hidden{
 }
 
 .bx.bx-log-out.icon,
+.bx.bx-objects-horizontal-left.icon,  
+.text.nav-text.totalHour,
 .text.nav-text.logout{
     color: var(--text-color);
+    cursor: pointer;
 }

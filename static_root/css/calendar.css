@@ -1,0 +1,290 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;700&display=swap');
+
+@font-face {
+    font-family: 'S-CoreDream-3Light';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+*{
+    font-family: 'S-CoreDream-3Light', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root{
+    /* Colors */
+    --body--color: #E4E9F7;
+    --sidebar-color: #FFF;
+    --primary-color: #695CFE;
+    --primary-color-light: #F6F5FF;
+    --toggle-color: #DDD;
+    --text-color: #707070;
+
+    /* Transition */
+    --tran-02: all 0.2s ease;
+    --tran-03: all 0.3s ease;
+    --tran-04: all 0.4s ease;
+    --tran-05: all 0.5s ease;
+}
+
+body{
+    height: 100vh;
+    background-color: var(--body--color);
+}
+
+.root{
+    display: flex;
+    width: 100%;
+    height: 92.7%;
+}
+
+i {
+    cursor: pointer;
+}
+
+h2{
+    text-align: center;
+}
+
+.main{
+    width: 100%;
+    background-color: var(--body--color);
+} 
+
+.header{
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: solid 1px #dee2e6;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.header div:first-child{
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 33vw;
+}
+
+.header div i{
+    margin: 5px;
+    margin-left: 20px;
+}
+
+/* tools */
+.header-tools{
+    margin-right: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    font-size: 26px;
+}
+
+.header-tools i{
+    font-size: 32px;
+}
+
+
+/* 캘린더 root */
+/* {
+    width: 65vw;
+    height: 85vh;
+    position: absolute; 
+    top: 50%;
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+}
+*/
+
+#calendar {
+    height: 95.6%;
+    margin: 20px;
+    background-color:  var(--sidebar-color);
+    border: #dee2e6 1px solid;
+    overflow: auto;
+    display: flex;
+    flex-direction: column; 
+    align-items: center; /
+}
+
+/* #calendar > div {
+    position: relative;
+}  */
+
+/* end */
+
+/* 요일 */
+.week-header{
+    display: table-cell;
+    height: 4vh;
+    border-collapse: collapse;
+}
+
+.week-header div{
+    width: 9vw;
+    height: 4vh;
+    border-radius: 5px 5px 0px 0px;
+    border-top: 1px solid var(--toggle-color);
+    border-left: 1px solid var(--toggle-color);;
+    border-right: 1px solid var(--toggle-color);
+    text-align: center;
+    display : table-cell;
+    vertical-align: middle;
+}
+
+.sunday{
+    color: red;
+}
+
+.saturday{
+    color: blue;
+}
+/* 요일 end */
+
+
+/* day */
+.week-row{
+    display: table;
+    height: 12vh;
+    border-collapse: collapse;
+}
+
+.week-row div{
+    width: 9vw;
+    height: 12vh;
+    border: 1px solid var(--toggle-color);
+    display : table-cell;
+    padding-top: 8px;
+    line-height: 100%;
+}
+
+.week-row div span{
+    margin-left: 8px;
+    margin-bottom: 5px;
+}
+
+.schedule{
+    color: white;
+    display: flex;
+    justify-content: center;
+    padding-left: 8px !important;
+}
+
+.week-row > div > div{
+    width: 100%;
+    height: 2.2vh;
+    background-color: #34DACE;
+    display: flex;
+    flex-direction: column; /* 수직으로 배치하도록 설정 */
+    vertical-align: center;
+    padding-top: 0px;
+    padding-left: 0px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.week-row .first{
+    margin-top: 6px;
+}
+
+
+
+/* arrow */
+.bx {
+    cursor: pointer;
+}
+
+/* sidebar */
+
+.sidebar{
+    width: 250px !important;
+    height: 100%;
+    background-color: var(--sidebar-color);
+}
+
+.sidebar .menu-bar{
+    height: calc(100% - 50px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar li{
+    height: 50px;
+    margin-top: 10px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sidebar li a{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: var(--tran-04);
+}
+
+.sidebar li .icon{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    font-size: 20px;
+}
+
+.sidebar li a:hover{
+    background-color: var(--primary-color) !important; 
+}
+
+.sidebar div li a:hover .icon,
+.sidebar div li a:hover .text{
+    color: var(--sidebar-color);
+}
+
+/* date popup */
+
+.date.hidden {
+    display: none;
+}
+
+.date{
+    width: 220px;
+    height: 80px;
+    background-color: var(--sidebar-color);
+    border-radius: 10px;
+    border: var(--toggle-color) solid 1px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.date > div{
+    /* display: block; */
+    margin-top: 10px;
+}
+
+.date input{
+    width: 178px;
+}
+
+.date button{
+    width: 178px;
+    height: 25px;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--sidebar-color);
+}
