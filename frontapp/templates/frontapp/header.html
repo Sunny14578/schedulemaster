@@ -1,20 +1,24 @@
 {% load static %}
 <header>
-        <div class = "title">
-            <img src="{% static 'imges/logo.png' %}" alt="logo">
-            <h2><a href="/">싱솔</a></h2>
+    <div class = "header-div">
+        <div class = "header-div2">
+            <div class = "title">
+                <img src="{% static 'imges/logo.png' %}" alt="logo">
+                <h2><a href="/">싱솔</a></h2>
+            </div>
+            <div>
+                <nav>
+                    <ul>
+                        <li><a onclick = "onTokenCheck()"> 스케줄 관리 </a></li>
+                        <li><a id = "myLink" onclick = "onTokenCheck2()"> 근태 관리 </a></li>
+                    </ul>
+                    <ul>
+                        <li><a id ="user-a"></a></li>
+                        <li><a id ="user2-a" onclick="onLogout()">로그아웃</a></li>
+                        <li><a id ="login-a" href = "login"> 로그인 </a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-        <div>
-            <nav>
-                <ul>
-                    <li><a onclick = "onTokenCheck()"> 스케줄 관리 </a></li>
-                    <li><a id = "myLink" onclick = "onTokenCheck2()"> 근태 관리 </a></li>
-                </ul>
-                <ul>
-                    <li><a id ="user-a"></a></li>
-                    <li><a id ="user2-a" onclick="onLogout()">로그아웃</a></li>
-                    <li><a id ="login-a" href = "login"> 로그인 </a></li>
-                </ul>
-            </nav>
-        </div>
+    </div>
 </header>

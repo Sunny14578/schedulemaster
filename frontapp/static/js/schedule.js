@@ -33,7 +33,8 @@ const body = document.querySelector("body"),
     quick_menu_icon = body.querySelectorAll(".quick-menu i");
     memo_icon = body.querySelector(".bx.bx-memory-card.icon");
     date_modal = body.querySelector(".date");
-    section = body.querySelector(".home");
+    quick_menu = body.querySelector(".quick-menu");
+    sheet = body.querySelector(".sheet");
     menu = body.querySelector(".menu");
     edit_icon = body.querySelectorAll(".bx.bx-edit");
 
@@ -1033,8 +1034,9 @@ if (token) {
 } 
 
 if (userdataCheck.role == 2){
-    section.style.pointerEvents = "none";
+    sheet.style.pointerEvents = "none";
     menu.style.pointerEvents = "none";
+    quick_menu.style.pointerEvents = "none";
     // pointer-events: none;
 }
 
