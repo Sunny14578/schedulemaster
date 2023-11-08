@@ -37,7 +37,7 @@ def get_secret(KEY, secrets=secrets):
 SECRET_KEY = get_secret("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 # DEBUG_TOOLBAR_CONFIG = {
 #     # ...
 #     'SHOW_TOOLBAR_CALLBACK': lambda request: True,
@@ -179,3 +179,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+SECURE_PROXY_SSL_HEAEDR = ('HTTP_X_FORWARED_PROTO' , 'https')
