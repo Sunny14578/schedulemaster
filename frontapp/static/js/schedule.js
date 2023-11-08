@@ -49,7 +49,7 @@ const body = document.querySelector("body"),
     // base js
     document.body.addEventListener("contextmenu", (event) => {
         event.preventDefault(); // 기본 컨텍스트 메뉴를 표시하지 않음
-        onDataTeacherGet();
+        // onDataTeacherGet();
     });
 
     exit_update_room.addEventListener("click", (event) => {
@@ -76,6 +76,13 @@ const body = document.querySelector("body"),
             }
         }
     });
+
+    const token = localStorage.getItem('authToken');
+    let userdataCheck = 1;
+
+    if (token) {
+        userdataCheck = JSON.parse(localStorage.getItem('user'));
+    } 
 
 
     // 다른영역 클릭시 모달창 끄기
@@ -1026,19 +1033,22 @@ async function onDataLecturePost() {
     }
 }
 
-const token = localStorage.getItem('authToken');
-let userdataCheck = 1;
+function onbaseCheck(){
+    const token = localStorage.getItem('authToken');
+    let userdataCheck = 1;
 
-if (token) {
-    userdataCheck = JSON.parse(localStorage.getItem('user'));
-} 
+    if (token) {
+        userdataCheck = JSON.parse(localStorage.getItem('user'));
+    } 
 
-if (userdataCheck.role == 2){
-    sheet.style.pointerEvents = "none";
-    menu.style.pointerEvents = "none";
-    quick_menu.style.pointerEvents = "none";
-    // pointer-events: none;
+    if (userdataCheck.role == 2){
+        sheet.style.pointerEvents = "none";
+        menu.style.pointerEvents = "none";
+        quick_menu.style.pointerEvents = "none";
+        // pointer-events: none;
+    }
 }
+
 
 let l_room_id = 0
 let room_edit_check = 0;
@@ -2188,6 +2198,7 @@ edit_icon.forEach((icon, index) =>{
 });
 
 window.onload = function(){
+    onbaseCheck();
     onDataLectureRoomGet();
     onUserUpdateCheck();
     
@@ -2196,6 +2207,5 @@ window.onload = function(){
     // }else{
     //     onDataUserCellGet();
     // }
-    
 }
 
